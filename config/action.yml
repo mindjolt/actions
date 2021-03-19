@@ -1,0 +1,25 @@
+# action.yml
+name: 'Config Service'
+description: 'Basic setup of config roots'
+inputs:
+  service:
+    description: 'The FQ URL of the config service. For example, for the sdk settings config service, the value would be `https://origin-prd-config-sdk-settings.jc-gs.com/v1`.'
+    required: true
+  root:
+    description: 'The case-sensitive root name to create/update.'
+    required: true
+  sandbox:
+    description: 'The config service sandbox to use.'
+    required: true
+    default: 'prod'
+  json:
+    description: 'The JSON string to use for the root.'
+    required: true
+    default: '{}'
+  overwrite:
+    description: 'If true, the specified json string will overwrite any current root. If false, any pre-existing root will not be overwritten.'
+    default: false
+runs:
+  using: 'docker'
+  image: docker://sgn0/drone-config-service
+  

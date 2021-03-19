@@ -1,0 +1,31 @@
+# action.yml
+name: 'Confluence'
+description: 'Publish markdown and PDFs to a confluence page'
+inputs:
+  user:
+    description: 'confluence user to auth as'
+    required: true
+  password:
+    description: 'confluence password to auth as'
+    required: true
+  page:
+    description: 'confluence page id to post documents to'
+    required: true
+  title:
+    description: 'Title for confluence page'
+    required: true
+  files:
+    description: 'One or more files to add to document. Comma separated local paths.'
+    required: true
+  toc:
+    description: 'If present, include table of contents'
+    required: false
+    default: false
+  toPdf:
+    description: 'If present, convert everything to PDF before posting'
+    required: false
+    default: false
+runs:
+  using: 'docker'
+  image: docker://sgn0/confluence
+  
