@@ -1,0 +1,13 @@
+
+.idea/
+target
+*.pyc
+*.meta
+venv/
+.DS_Store
+__init__.py
+*.sln
+*.csproj
+.unity-link
+Directory.Build.props
+*.sln.DotSettings.user

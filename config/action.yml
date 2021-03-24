@@ -3,7 +3,7 @@ name: 'Config Service'
 description: 'Basic setup of config roots'
 inputs:
   service:
-    description: 'The FQ URL of the config service. For example, for the sdk settings config service, the value would be `https://origin-prd-config-sdk-settings.jc-gs.com/v1`.'
+    description: 'The FQ URL of the config service.' 
     required: true
   root:
     description: 'The case-sensitive root name to create/update.'

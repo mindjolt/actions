@@ -1,0 +1,49 @@
+# action.yml
+name: 'Package Manager Publish'
+description: 'Publishes Package Manager packages to artifactory'
+inputs:
+  user:
+    description: 'Artifactory user to auth as'
+    required: false
+  password:
+    description: 'Artifactory password to auth as'
+    required: false
+  rootUrl:
+    description: 'Artifactory root url'
+    required: false
+  packageName:
+    description: 'Name of the package (JamCity.CommonSdk, JamCity.ConfigSdk, etc).'
+    required: true
+  packageVersion:
+    description: 'The version of package.'
+    required: true
+  packageZip:
+    description: 'Path to zip file containing package to publish'
+    required: true
+  packageJson:
+    description: 'Path to package.json to publish'
+    required: true
+  releaseRepo:
+    description: 'The name of the artifactory report for released packages.'
+    required: true
+    default: 'jcpm-release-local'
+  prereleaseRepo:
+    description: 'The name of the artifactory report for prereleased packages.'
+    required: true
+    default: 'jcpm-snapshot-local'
+  branchRef:
+    description: 'If specified, publish will fail to publish if the releaseVersion is not appropriate for the branchRef. That is, a pre-release version cannot be published to the main/master branch and a release version can''t be published to the develop branch.'
+    required: false
+  legacyPublish:
+    description: 'If true, release builds will be published to the legacy location. This feature is deprecated and will be removed soon. Defaults to false.'
+    required: false
+  
+runs:
+  using: 'composite'
+  steps:
+    - run: '$GITHUB_ACTION_PATH/publish.sh --name "${{inputs.packageName}}" --version "${{inputs.packageVersion}}" --zip "${{inputs.packageZip}}"
+           --json "${{inputs.packageJson}}" --user "${{inputs.user}}" --password "${{inputs.password}}" --rootUrl "${{inputs.rootUrl}}" 
+           --branch "${{inputs.branchRef}}" --releaseRepo "${{inputs.releaseRepo}}" --prereleaseRepo "${{inputs.prereleaseRepo}}"
+           --legacyPublish "${{inputs.legacyPublish}}"'
+      shell: bash
+  
