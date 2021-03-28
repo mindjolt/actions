@@ -26,11 +26,11 @@ inputs:
     required: true
     default: 'https://socialgamingnetwork.jira.com/wiki/rest/api/content'
   toc:
-    description: 'If present, include table of contents'
+    description: 'If true, include table of contents'
     required: false
     default: 'false'
   toPdf:
-    description: 'If present, convert everything to PDF before posting'
+    description: 'If true, convert everything to PDF before posting'
     required: false
     default: 'false'
 runs:

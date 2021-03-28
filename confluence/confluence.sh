@@ -7,39 +7,39 @@ key="$1"
 
 case $key in
     --user)
-    PLUGIN_USER="$2"
+    artifactoryUser="$2"
     shift; shift
     ;;
     --password)
-    PLUGIN_PASSWORD="$2"
+    artifactoryPassword="$2"
     shift; shift
     ;;
     --page)
-    PLUGIN_PAGE="$2"
+    confluencePage="$2"
     shift; shift
     ;;
     --files)
-    PLUGIN_FILES="$2"
+    files="$2"
     shift; shift
     ;;
     --title)
-    PLUGIN_TITLE="$2"
+    title="$2"
     shift; shift
     ;;
     --url)
-    PLUGIN_URI="$2"
+    confluenceUrl="$2"
     shift; shift
     ;;
     --space)
-    PLUGIN_SPACE="$2"
+    confluenceSpace="$2"
     shift; shift
     ;;
     --toc)
-    [[ "$2" == "true" ]] && PLUGIN_TOC=true
+    [[ "$2" == "true" ]] && toc=true
     shift; shift
     ;;
     --toPdf)
-    [[ "$2" == "true" ]] && PLUGIN_TOPDF=true
+    [[ "$2" == "true" ]] && toPdf=true
     shift; shift
     ;;
     *)    # unknown option
@@ -50,6 +50,13 @@ esac
 done
 
 [[ $(uname) == 'Darwin' ]] && {
+  missing=""
+  brew list curl jq pandoc >/dev/null || printf -v missing "%s\n  brew install curl jq pandoc" "$missing"  
+  brew list --cask mactex >/dev/null || printf -v missing "%s\n  brew uninstall basictex\n  brew install --cask mactex" "$missing"
+  [[ -n "$missing" ]] && {
+    printf "Missing required homebrew packages. Run the following on the machine to install them:%s" "$missing"
+    exit 1
+  }
   latexPath="$HOME/.local/share/pandoc/templates"
 } || {
   latexPath="/usr/share/pandoc/data/templates"
@@ -62,25 +69,20 @@ done
   cp "$GITHUB_ACTION_PATH/eisvogel.latex" "$latexPath/eisvogel.latex"
 }
 
-AUTH="$PLUGIN_USER:$PLUGIN_PASSWORD"
+AUTH="$artifactoryUser:$artifactoryPassword"
 
-[ -z "$PLUGIN_USER" ] && echo "Missing user parameter" && exit 1
-[ -z "$PLUGIN_PASSWORD" ] && echo "Missing password parameter" && exit 1
+[ -z "$artifactoryUser" ] && echo "Missing user parameter" && exit 1
+[ -z "$artifactoryPassword" ] && echo "Missing password parameter" && exit 1
 
-if [ -z "$PLUGIN_URI" ]; then
-  PLUGIN_URI="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
+if [ -z "$confluenceUrl" ]; then
+  confluenceUrl="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
 fi
 
-[ -z "$PLUGIN_SPACE" ] && PLUGIN_SPACE="GS"
-
-# backward compatibility
-if [ ! -z "$PLUGIN_FILE" ]; then
-  PLUGIN_FILES="$PLUGIN_FILE"
-fi
+[ -z "$confluenceSpace" ] && confluenceSpace="GS"
 
 OIFS=$IFS
 IFS=","
-files=($PLUGIN_FILES)
+files=($files)
 IFS=$OIFS
 
 body="/tmp/body.html"
@@ -93,8 +95,8 @@ function AddPdf() {
     -X PUT \
     -H "X-Atlassian-Token: nocheck" \
     -F "file=@$file" \
-    "$PLUGIN_URI/$PLUGIN_PAGE/child/attachment"
-    "$PLUGIN_URI/$PLUGIN_PAGE/child/attachment" | jq '. | select(.statusCode != 200) | .message | halt_error(1)'
+    "$confluenceUrl/$confluencePage/child/attachment"
+    "$confluenceUrl/$confluencePage/child/attachment" | jq '. | select(.statusCode != 200) | .message | halt_error(1)'
   [[ $? -ne 0 ]] && exit 1
   echo "<ac:structured-macro ac:name=\"viewpdf\" ac:schema-version=\"1\" data-layout=\"default\" ac:macro-id=\"6475fe31-7130-4438-bb8f-9cba0389b07c\"><ac:parameter ac:name=\"name\"><ri:attachment ri:filename=\"$(basename $file)\" ri:version-at-save=\"1\" /></ac:parameter></ac:structured-macro>" >>"$body"
 }
@@ -102,10 +104,10 @@ function AddPdf() {
 for file in "${files[@]}"; do
   ext="${file##*.}"
   name=$(basename $file)
-  if [ -n "$PLUGIN_TOPDF" ] && [ "$ext" != "pdf" ]; then
+  if [ -n "$toPdf" ] && [ "$ext" != "pdf" ]; then
 
     ptoc=""
-    [ -n "$PLUGIN_TOC" ] && ptoc="--toc"
+    [ -n "$toc" ] && ptoc="--toc"
     pushd "$(dirname $file)" >/dev/null
     pandoc "$name" $ptoc -V colorlinks -V geometry:margin=0.5in -f markdown_mmd-implicit_figures -o "/tmp/${name}.pdf"
     popd >/dev/null
@@ -128,12 +130,12 @@ for file in "${files[@]}"; do
   fi
 done
 
-version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$PLUGIN_URI/$PLUGIN_PAGE?expand=version" | jq ".version.number")
+version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$confluenceUrl/$confluencePage?expand=version" | jq ".version.number")
 version=$(($version + 1))
 
 body=$(cat "$body" | sed -e 's/"/\\"/g')
 
-if [ -z "$PLUGIN_TOC" ] || [ -n "$PLUGIN_TOPDF" ]; then
+if [ -z "$toc" ] || [ -n "$toPdf" ]; then
   toc=""
 else
   toc='<ac:structured-macro ac:name=\"toc\" ac:schema-version=\"1\" data-layout=\"default\" ac:macro-id=\"b3cd01d8-c9b6-40c6-8331-66b9b952e095\"/>'
@@ -141,10 +143,10 @@ fi
 
 cat >/tmp/body.json <<EOF
 {
-  "id": "$PLUGIN_PAGE",
+  "id": "$confluencePage",
   "type":"page",
-  "title":"$PLUGIN_TITLE",
-  "space":{"key":"$PLUGIN_SPACE"},
+  "title":"$title",
+  "space":{"key":"$confluenceSpace"},
   "body": {
     "storage": {
       "value":"$toc$body",
@@ -160,7 +162,7 @@ curl \
   -u $AUTH \
   -X PUT \
   -H 'Content-Type: application/json' \
-  -d @/tmp/body.json --url "$PLUGIN_URI/$PLUGIN_PAGE" |  jq '. | select(.statusCode != 200) | .message | halt_error(1)'
+  -d @/tmp/body.json --url "$confluenceUrl/$confluencePage" |  jq '. | select(.statusCode != 200) | .message | halt_error(1)'
 if [ $? -ne 0 ]; then
   exit $?
 fi

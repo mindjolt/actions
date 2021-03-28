@@ -31,11 +31,12 @@ Parameters:
     toc: true
 ```
 
-This plugin requires pandoc and latex be installed on the host machine. On MacOs, you can do the following: 
+This plugin requires pandoc, curl, jq and mactex be installed on the host machine. On MacOs, you can do the following: 
 
 ```shell
-brew install pandoc
-brew cask uninstall basictex 
+brew install curl jq pandoc
+# basictex doesn't work correctly, needs mactex. So have to uninstall basictex.
+brew uninstall basictex 
 brew install --cask mactex
 ```
 
