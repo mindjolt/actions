@@ -77,6 +77,7 @@ Parameters:
 * `packageVersion` - A valid semver2 version string.
 * `packageZip` - Local path the the zip file of the package to publish.
 * `packageJson` - Local path to the package.json.
+* `extras` - Comma-separated list of additional files to publish along side the package.  
 * `branchRef` - The value of `${{github.ref}}`. Optional, see below.
 * `releaseRepo` - The artifactory repo to use for released packages. Defaults to `jcpm-release-local`.
 * `prereleaseRepo` - The artifactory repo to use for prereleased packages. Defaults to `jcpm-snapsho-local`.

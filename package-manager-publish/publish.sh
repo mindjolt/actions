@@ -34,6 +34,13 @@ case $key in
     packageJson="$2"
     shift; shift
     ;;
+    --extras)
+    OIFS=$IFS
+    IFS=","
+    extras=($2)
+    IFS=$OIFS
+    shift; shift
+    ;;
     --branch)
     branchRef="$2"
     shift; shift
@@ -81,6 +88,11 @@ fi
 
 curl -f -s -X PUT -u "$artifactoryUser:$artifactoryPassword" --data-binary "@$packageZip" "$uri/${packageName}.zip" > /tmp/curl.out 2>&1 || { cat /tmp/curl.out && exit 1; }
 curl -f -s -X PUT -u "$artifactoryUser:$artifactoryPassword" --data-binary "@$packageJson" "$uri/package.json" > /tmp/curl.out 2>&1 || { cat /tmp/curl.out && exit 1; }
+[ ${#extras[@]} -gt 0 ] && {
+  for file in "${extras[@]}"; do
+    curl -f -s -X PUT -u "$artifactoryUser:$artifactoryPassword" --data-binary "@$file" "$uri/$(basename $file)" > /tmp/curl.out 2>&1 || { cat /tmp/curl.out && exit 1; }
+  done
+}
 
 # Legacy
 if [[ "$legacyPublish" == "true" ]] && [[ "$isPrerelease" == "false" ]]; then

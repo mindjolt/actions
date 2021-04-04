@@ -23,6 +23,9 @@ inputs:
   packageJson:
     description: 'Path to package.json to publish'
     required: true
+  extras:
+    description: 'Additional files to publish to artifactory, comma separated'
+    required: false
   releaseRepo:
     description: 'The name of the artifactory report for released packages.'
     required: true
@@ -44,6 +47,6 @@ runs:
     - run: '$GITHUB_ACTION_PATH/publish.sh --name "${{inputs.packageName}}" --version "${{inputs.packageVersion}}" --zip "${{inputs.packageZip}}"
            --json "${{inputs.packageJson}}" --user "${{inputs.user}}" --password "${{inputs.password}}" --rootUrl "${{inputs.rootUrl}}" 
            --branch "${{inputs.branchRef}}" --releaseRepo "${{inputs.releaseRepo}}" --prereleaseRepo "${{inputs.prereleaseRepo}}"
-           --legacyPublish "${{inputs.legacyPublish}}"'
+           --legacyPublish "${{inputs.legacyPublish}}" --extras "${{inputs.extras}}"'
       shell: bash
   
