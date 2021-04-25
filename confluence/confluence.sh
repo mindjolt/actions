@@ -96,7 +96,7 @@ function AddPdf() {
     -H "X-Atlassian-Token: nocheck" \
     -F "file=@$file" \
     "$confluenceUrl/$confluencePage/child/attachment"
-    "$confluenceUrl/$confluencePage/child/attachment" | jq '. | select(.statusCode != 200) | .message | halt_error(1)'
+    "$confluenceUrl/$confluencePage/child/attachment" | jq '. | select(.statusCode != 200) | error(.message)'
   [[ $? -ne 0 ]] && exit 1
   echo "<ac:structured-macro ac:name=\"viewpdf\" ac:schema-version=\"1\" data-layout=\"default\" ac:macro-id=\"6475fe31-7130-4438-bb8f-9cba0389b07c\"><ac:parameter ac:name=\"name\"><ri:attachment ri:filename=\"$(basename $file)\" ri:version-at-save=\"1\" /></ac:parameter></ac:structured-macro>" >>"$body"
 }
@@ -162,7 +162,7 @@ curl \
   -u $AUTH \
   -X PUT \
   -H 'Content-Type: application/json' \
-  -d @/tmp/body.json --url "$confluenceUrl/$confluencePage" |  jq '. | select(.statusCode != 200) | .message | halt_error(1)'
+  -d @/tmp/body.json --url "$confluenceUrl/$confluencePage" |  jq '. | select(.statusCode != 200) | error(.message)'
 if [ $? -ne 0 ]; then
   exit $?
 fi
