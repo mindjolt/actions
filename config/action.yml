@@ -1,9 +1,9 @@
 # action.yml
-name: 'Config Service'
+name: 'Confluence'
 description: 'Basic setup of config roots'
 inputs:
   service:
-    description: 'The FQ URL of the config service.' 
+    description: 'The FQ URL of the config service. For example, for the sdk settings config service, the value would be `https://origin-prd-config-sdk-settings.jc-gs.com/v1`.'
     required: true
   root:
     description: 'The case-sensitive root name to create/update.'
@@ -21,5 +21,6 @@ inputs:
     default: false
 runs:
   using: 'docker'
-  image: docker://sgn0/drone-config-service
+  image: docker://sgn0/config-service-action:main
+  entrypoint: '/config-service.sh'
   

@@ -1,88 +1,24 @@
 #!/bin/bash
 
-POSITIONAL=()
-while [[ $# -gt 0 ]]
-do
-key="$1"
+AUTH="$INPUT_USER:$INPUT_PASSWORD"
 
-case $key in
-    --user)
-    artifactoryUser="$2"
-    shift; shift
-    ;;
-    --password)
-    artifactoryPassword="$2"
-    shift; shift
-    ;;
-    --page)
-    confluencePage="$2"
-    shift; shift
-    ;;
-    --files)
-    files="$2"
-    shift; shift
-    ;;
-    --title)
-    title="$2"
-    shift; shift
-    ;;
-    --url)
-    confluenceUrl="$2"
-    shift; shift
-    ;;
-    --space)
-    confluenceSpace="$2"
-    shift; shift
-    ;;
-    --toc)
-    [[ "$2" == "true" ]] && toc=true
-    shift; shift
-    ;;
-    --toPdf)
-    [[ "$2" == "true" ]] && toPdf=true
-    shift; shift
-    ;;
-    *)    # unknown option
-    POSITIONAL+=("$1") # save it in an array for later
-    shift # past argument
-    ;;
-esac
-done
+[ -z "$INPUT_USER" ] && echo "Missing user parameter" && exit 1
+[ -z "$INPUT_PASSWORD" ] && echo "Missing password parameter" && exit 1
 
-[[ $(uname) == 'Darwin' ]] && {
-  missing=""
-  brew list curl jq pandoc >/dev/null || printf -v missing "%s\n  brew install curl jq pandoc" "$missing"  
-  brew list --cask mactex >/dev/null || printf -v missing "%s\n  brew uninstall basictex\n  brew install --cask mactex" "$missing"
-  [[ -n "$missing" ]] && {
-    printf "Missing required homebrew packages. Run the following on the machine to install them:%s" "$missing"
-    exit 1
-  }
-  latexPath="$HOME/.local/share/pandoc/templates"
-} || {
-  latexPath="/usr/share/pandoc/data/templates"
-}
-
-[[ ! -e "$latexPath/default.latex" ]] && {
-  cp "$GITHUB_ACTION_PATH/eisvogel.latex" "$latexPath/default.latex"
-}
-[[ ! -e "$latexPath/eisvogel.latex" ]] && {
-  cp "$GITHUB_ACTION_PATH/eisvogel.latex" "$latexPath/eisvogel.latex"
-}
-
-AUTH="$artifactoryUser:$artifactoryPassword"
-
-[ -z "$artifactoryUser" ] && echo "Missing user parameter" && exit 1
-[ -z "$artifactoryPassword" ] && echo "Missing password parameter" && exit 1
-
-if [ -z "$confluenceUrl" ]; then
-  confluenceUrl="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
+if [ -z "$INPUT_URI" ]; then
+  INPUT_URI="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
 fi
 
-[ -z "$confluenceSpace" ] && confluenceSpace="GS"
+[ -z "$INPUT_SPACE" ] && INPUT_SPACE="GS"
+
+# backward compatibility
+if [ ! -z "$INPUT_FILE" ]; then
+  INPUT_FILES="$INPUT_FILE"
+fi
 
 OIFS=$IFS
 IFS=","
-files=($files)
+files=($INPUT_FILES)
 IFS=$OIFS
 
 body="/tmp/body.html"
@@ -95,8 +31,8 @@ function AddPdf() {
     -X PUT \
     -H "X-Atlassian-Token: nocheck" \
     -F "file=@$file" \
-    "$confluenceUrl/$confluencePage/child/attachment"
-    "$confluenceUrl/$confluencePage/child/attachment" | jq '. | select(.statusCode != 200) | error(.message)'
+    "$INPUT_URI/$INPUT_PAGE/child/attachment"
+    "$INPUT_URI/$INPUT_PAGE/child/attachment" | jq '. | select(.statusCode != 200) | error(.message)'
   [[ $? -ne 0 ]] && exit 1
   echo "<ac:structured-macro ac:name=\"viewpdf\" ac:schema-version=\"1\" data-layout=\"default\" ac:macro-id=\"6475fe31-7130-4438-bb8f-9cba0389b07c\"><ac:parameter ac:name=\"name\"><ri:attachment ri:filename=\"$(basename $file)\" ri:version-at-save=\"1\" /></ac:parameter></ac:structured-macro>" >>"$body"
 }
@@ -104,10 +40,10 @@ function AddPdf() {
 for file in "${files[@]}"; do
   ext="${file##*.}"
   name=$(basename $file)
-  if [ -n "$toPdf" ] && [ "$ext" != "pdf" ]; then
+  if [ "$INPUT_TOPDF" == "true" ] && [ "$ext" != "pdf" ]; then
 
     ptoc=""
-    [ -n "$toc" ] && ptoc="--toc"
+    [ "$INPUT_TOC" == "true" ] && ptoc="--toc"
     pushd "$(dirname $file)" >/dev/null
     pandoc "$name" $ptoc -V colorlinks -V geometry:margin=0.5in -f markdown_mmd-implicit_figures -o "/tmp/${name}.pdf"
     popd >/dev/null
@@ -130,12 +66,13 @@ for file in "${files[@]}"; do
   fi
 done
 
-version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$confluenceUrl/$confluencePage?expand=version" | jq ".version.number")
+
+version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$INPUT_URI/$INPUT_PAGE?expand=version" | jq ".version.number")
 version=$(($version + 1))
 
 body=$(cat "$body" | sed -e 's/"/\\"/g')
 
-if [ -z "$toc" ] || [ -n "$toPdf" ]; then
+if [ "$INPUT_TOC" != "true" ] || [ "$INPUT_TOPDF" == "true" ]; then
   toc=""
 else
   toc='<ac:structured-macro ac:name=\"toc\" ac:schema-version=\"1\" data-layout=\"default\" ac:macro-id=\"b3cd01d8-c9b6-40c6-8331-66b9b952e095\"/>'
@@ -143,10 +80,10 @@ fi
 
 cat >/tmp/body.json <<EOF
 {
-  "id": "$confluencePage",
+  "id": "$INPUT_PAGE",
   "type":"page",
-  "title":"$title",
-  "space":{"key":"$confluenceSpace"},
+  "title":"$INPUT_TITLE",
+  "space":{"key":"$INPUT_SPACE"},
   "body": {
     "storage": {
       "value":"$toc$body",
@@ -162,7 +99,7 @@ curl \
   -u $AUTH \
   -X PUT \
   -H 'Content-Type: application/json' \
-  -d @/tmp/body.json --url "$confluenceUrl/$confluencePage" |  jq '. | select(.statusCode != 200) | error(.message)'
+  -d @/tmp/body.json --url "$INPUT_URI/$INPUT_PAGE" |  jq '. | select(.statusCode != 200) | error(.message)'
 if [ $? -ne 0 ]; then
   exit $?
 fi

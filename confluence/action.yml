@@ -26,17 +26,14 @@ inputs:
     required: true
     default: 'https://socialgamingnetwork.jira.com/wiki/rest/api/content'
   toc:
-    description: 'If true, include table of contents'
+    description: 'If present, include table of contents'
     required: false
     default: 'false'
   toPdf:
-    description: 'If true, convert everything to PDF before posting'
+    description: 'If present, convert everything to PDF before posting'
     required: false
     default: 'false'
 runs:
-  using: 'composite'
-  steps: 
-    - run: '$GITHUB_ACTION_PATH/confluence.sh --user "${{inputs.user}}" --password "${{inputs.password}}" --page "${{inputs.page}}" 
-           --title "${{inputs.title}}" --files "${{inputs.files}}" --space "${{inputs.space}}" --url "${{inputs.uri}}" 
-           --toc "${{inputs.toc}}" --toPdf "${{inputs.toPdf}}"'
-      shell: bash
+  using: 'docker'
+  image: docker://sgn0/confluence-action:main
+  entrypoint: '/confluence.sh'

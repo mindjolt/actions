@@ -1,0 +1,18 @@
+# action.yml
+name: 'SBT Unity Builder'
+description: 'Builds Unity SDKs using SBT plugin'
+inputs:
+  sbt:
+    description: 'The SBT commands to execute'
+    required: true
+  packageJson:
+    description: 'Path to resulting package.json to parse'
+    required: true
+    default: 'target/package.json'
+runs:
+  using: 'docker'
+  image: docker://sgn0/sbt-unity-action:main
+  entrypoint: '/build.sh'
+  post-entrypoint: '/cleanup.sh'
+  
+  

@@ -1,0 +1,29 @@
+# action.yml
+name: 'Nuget Publish'
+description: 'Publishes to local nuget repository on artifactory. Requires nuget already installed.'
+inputs:
+  user:
+    description: 'Artifactory user to auth as'
+    required: false
+  password:
+    description: 'Artifactory password to auth as'
+    required: false
+  rootUrl:
+    description: 'Artifactory url root'
+    required: false
+  packagePath:
+    description: 'Path to the .nupkg package'
+    required: true
+  
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        [[ -n "${{inputs.user}}" ]] && user="${{inputs.user}}" || user="$SECRETS_ARTIFACTORY_USER"
+               [[ -n "${{inputs.password}}" ]] && password="${{inputs.password}}" || password="$SECRETS_ARTIFACTORY_PASSWORD"
+               [[ -n "${{inputs.rootUrl}}" ]] && root="${{inputs.rootUrl}}" || root="$SECRETS_ARTIFACTORY_ROOT"
+               nuget setapikey "${user}:${password}" -Source "${root}/api/nuget/nuget-local"
+               path="${{inputs.packagePath}}"
+               [[ ! -e "$path" ]] && [[ "${path}" == *"+"* ]] && path="${path%+*}.nupkg"
+               nuget push "${path}" -src "${root}/api/nuget/nuget-local"
+      shell: bash  

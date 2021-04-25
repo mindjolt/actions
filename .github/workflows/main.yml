@@ -18,6 +18,21 @@ jobs:
       run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
     - name: Build Confluence Docker Image
       run: |
-        cd confluence-docker
+        cd confluence
         docker build . --file Dockerfile --tag sgn0/confluence-action:${{steps.vars.outputs.tag}} 
         docker push sgn0/confluence-action:${{steps.vars.outputs.tag}}
+    - name: Build Nuget Publish Image
+      run: |
+        cd nuget-publish
+        docker build . --file Dockerfile --tag sgn0/nuget-publish-action:${{steps.vars.outputs.tag}} 
+        docker push sgn0/nuget-publish-action:${{steps.vars.outputs.tag}}
+    - name: Build Config Service Image
+      run: |
+        cd config
+        docker build . --file Dockerfile --tag sgn0/config-service-action:${{steps.vars.outputs.tag}} 
+        docker push sgn0/config-service-action:${{steps.vars.outputs.tag}}
+    - name: Build SBT Unity Docker Image
+      run: |
+        cd sbt-unity
+        docker build . --file Dockerfile --tag sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
+        docker push sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}

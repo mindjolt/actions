@@ -4,9 +4,18 @@ Github Actions
 This repo contains a collection of Jam City github actions for use in
 [Github Action](https://docs.github.com/en/actions) workflows.
 
+* [confluence](#confluence) - Posts markdown and pdf documents to confluence.
+* [confluence-mac](#confluence-for-mac) - Same as above but intended to run on a Mac without docker.
+* [config](#config) - Simple action for updating config service roots.
+* [package-manager-publish](#package-manager-publish) - Publishes Jam City Package Manager packages to JC artifactory.
+* [nuget-publish](#nuget-publish) - Publishes nuget packages to JC artifactory.
+* [nuget-publish-mac](#nuget-publish-for-mac) - Same as above but intended to run on a Mac without docker.
+* [sbt-unity](#sbt-unity) - Action for building SDKs using the JC sbt plugin.
+
+
 ### [Confluence](confluence/action.yml)
 The confluence action provide a mechanism for posting markdown and PDFs 
-to a confluence page.
+to a confluence page. This action requires docker.
 
 Parameters:
 
@@ -21,7 +30,7 @@ Parameters:
 
 ```yaml
 - name: Confluence Documentation
-  uses: mindjolt/actions/confluence@v1
+  uses: mindjolt/actions/confluence@v2
   with:
     user: ${{ secrets.CONFLUENCE_USER }}
     password: ${{ secrets.CONFLUENCE_PASSWORD }}
@@ -40,9 +49,15 @@ brew uninstall basictex
 brew install --cask mactex
 ```
 
-### [Confluence (docker)](confluence-docker/action.yml)
-This is the same as the [Confluence](#confluence) action, except it uses a prepared
-docker image that contains pandoc and latex. Only works on linux.
+### [Confluence for mac](confluence-mac/action.yml)
+This is the same as the [Confluence](#confluence) action, except it is intended to run on
+a Mac. The Mac needs to have Homebrew installed with the following components:
+
+```shell
+brew install curl jq pandoc
+brew uninstall basictex
+brew install --cask mactex-no-gui
+````
 
 ### [Config](config/action.yml)
 The config action allows for simple set up of config service roots in 
@@ -58,7 +73,7 @@ Parameters:
 
 ```yaml
 - name: Config Root Initialize
-  uses: mindjolt/actions/config@v1
+  uses: mindjolt/actions/config@v2
   with:
     service: https://origin-prd-config-sdk-settings.jc-gs.com/v1
     root: JamCity.GemSdk
@@ -98,7 +113,7 @@ The following will publish to release repository:
 
 ```yaml
 - name: Publish
-  uses: mindjolt/actions/package-manager-publish@v1
+  uses: mindjolt/actions/package-manager-publish@v2
   with:
     rootUrl: ${{ secrets.ARTIFACTORY_ROOT }}
     user: ${{ secrets.ARTIFACTORY_USER }}
@@ -114,7 +129,7 @@ The following will publish to pre-release repository:
 
 ```yaml
 - name: Publish
-  uses: mindjolt/actions/package-manager-publish@v1
+  uses: mindjolt/actions/package-manager-publish@v2
   with:
     rootUrl: ${{ secrets.ARTIFACTORY_ROOT }}
     user: ${{ secrets.ARTIFACTORY_USER }}
@@ -127,21 +142,53 @@ The following will publish to pre-release repository:
 ```
 
 ### [Nuget Publish](nuget-publish/action.yml)
-Publishes nuget packages to artifactory.
+Publishes nuget packages to artifactory. Requires docker.
 
 Parameters:
 
 * `rootUrl` - The artifactory root URL.
 * `user` - The artifactory user to use.
 * `password` - The password/token for the `user`.
-* `packagePath` - The path to the nupkg to publish. 
+* `packagePath` - The path to the nupkg to publish.
 
 ```yaml
 - name: Publish nuget
-  uses: mindjolt/actions/nuget-publish@v1
+  uses: mindjolt/actions/nuget-publish@v2
   with:
     rootUrl: ${{ secrets.ARTIFACTORY_ROOT }}
     user: ${{ secrets.ARTIFACTORY_USER }}
     password: ${{ secrets.ARTIFACTORY_PASSWORD }}
     packagePath: target/${{env.PACKAGE_NAME}}.${{env.PACKAGE_VERSION}}.nupkg
 ```
+
+### [Nuget Publish for Mac](nuget-publish-mac/action.yml)
+Same as [Nuget Publish](#nuget-publish) except it is intended to run on
+a Mac. The Mac needs to have Homebrew installed with the following components:
+
+```shell
+brew install nuget
+brew uninstall basictex
+brew install --cask mactex-no-gui
+````
+
+### [Sbt Unity](sbt-unity/action.yml)
+Executes SBT commands in a container that includes mono, dotnet, nuget and other tools for 
+building JC SDKs.
+
+Parameters:
+
+* `sbt` - The SBT command line to execute.
+* `packageJson` - If present, should refer to a local `package.json` file. This file will be parsed
+  and the properties of the files will be made available to subsequent steps as environment variables
+  with the `PACKAGE_` prefix.
+
+Example:
+
+```yaml
+- name: Build
+  uses: mindjolt/actions/sbt-unity@v2
+  with:
+    sbt: 'packageUnity packageDotnet'
+    packageJson: 'target/package.json'
+```
+

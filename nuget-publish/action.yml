@@ -16,14 +16,6 @@ inputs:
     required: true
   
 runs:
-  using: 'composite'
-  steps:
-    - run: |
-        [[ -n "${{inputs.user}}" ]] && user="${{inputs.user}}" || user="$SECRETS_ARTIFACTORY_USER"
-        [[ -n "${{inputs.password}}" ]] && password="${{inputs.password}}" || password="$SECRETS_ARTIFACTORY_PASSWORD"
-        [[ -n "${{inputs.rootUrl}}" ]] && root="${{inputs.rootUrl}}" || root="$SECRETS_ARTIFACTORY_ROOT"
-        nuget setapikey "${user}:${password}" -Source "${root}/api/nuget/nuget-local"
-        path="${{inputs.packagePath}}"
-        [[ ! -e "$path" ]] && [[ "${path}" == *"+"* ]] && path="${path%+*}.nupkg"
-        nuget push "${path}" -src "${root}/api/nuget/nuget-local"
-      shell: bash  
+  using: 'docker'
+  image: docker://sgn0/nuget-publish-action:main
+  entrypoint: '/publish.sh'
