@@ -35,5 +35,4 @@ inputs:
     default: 'false'
 runs:
   using: 'docker'
-  image: docker://sgn0/confluence
-  
+  image: docker://sgn0/confluence-action:main
