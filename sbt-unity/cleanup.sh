@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Give sbt a shot first
+sbt clean
+
 # Remove build artifacts to prevent some permissioning issues
 [[ -e "$GITHUB_WORKSPACE" ]] && rm -rf $GITHUB_WORKSPACE/project/project $GITHUB_WORKSPACE/project/target $GITHUB_WORKSPACE/target
 
