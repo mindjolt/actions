@@ -1,0 +1,12 @@
+name: 'Build tags'
+description: 'Generate tags based on build version and repo data'
+inputs:
+  build-version:  # from package.json, build.gradle or build.sbt
+    description: 'committed package version'
+    required: false
+outputs:
+  tags: # id of output
+    description: 'Comma separated list of tags'
+runs:
+  using: 'node12'
+  main: 'index.js'

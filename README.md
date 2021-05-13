@@ -11,6 +11,7 @@ This repo contains a collection of Jam City github actions for use in
 * [nuget-publish](#nuget-publish) - Publishes nuget packages to JC artifactory.
 * [nuget-publish-mac](#nuget-publish-for-mac) - Same as above but intended to run on a Mac without docker.
 * [sbt-unity](#sbt-unity) - Action for building SDKs using the JC sbt plugin.
+* [build-tags](build-tags/README.md) - Action for generating a list of standard docker image tags
 
 
 ### [Confluence](confluence/action.yml)
