@@ -44,7 +44,7 @@ ln -s ~/.ivy2 /root/.ivy2
 ln -s ~/.sbt /root/.sbt
   
 CMD="sbt $INPUT_SBT"
-eval $CMD
+eval $CMD || exit 1
 
 if [ -e "$INPUT_PACKAGEJSON" ]; then
   cat "$INPUT_PACKAGEJSON" | jq -r 'to_entries[] | "PACKAGE_\(.key | [ splits("(?=[A-Z])") ] | map(select(. != "")) | join("_") | ascii_upcase)=\(.value)"' >> $GITHUB_ENV
