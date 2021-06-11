@@ -1,6 +1,5 @@
-### Confluence (docker)
-The confluence action provide a mechanism for posting markdown and PDFs
-to a confluence page. This action requires docker.
+### Confluence (non-docker)
+The confluence action provide a mechanism for posting markdown and PDFs to a confluence page. 
 
 Parameters:
 
@@ -25,4 +24,12 @@ Parameters:
     toc: true
 ```
 
+This plugin requires pandoc, curl, jq and mactex be installed on the host machine. On MacOs, you can do the following:
+
+```shell
+brew install curl jq pandoc
+# basictex doesn't work correctly, needs mactex. So have to uninstall basictex.
+brew uninstall basictex 
+brew install --cask mactex
+```
 

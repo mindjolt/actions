@@ -68,6 +68,12 @@ done
 [[ -z "$artifactoryPassword" ]] && artifactoryPassword="$SECRETS_ARTIFACTORY_PASSWORD"
 [[ -z "$artifactoryRoot" ]] && artifactoryRoot="$SECRETS_ARTIFACTORY_ROOT"
 
+cat "$packageJson" | jq -r 'to_entries[] | "export PACKAGE_\(.key | [ splits("(?=[A-Z])") ] | map(select(. != "")) | join("_") | ascii_upcase)='\''\(.value)'\''"'  > /tmp/env
+. /tmp/env
+
+[[ -z "$packageName" ]] && packageName="$PACKAGE_NAME"
+[[ -z "$packageVersion" ]] && packageVersion="$PACKAGE_VERSION"
+
 [[ "$packageVersion" == *"-"* ]] && isPrerelease=true || isPrerelease=false
 
 if [[ -n "$branchRef" ]]; then

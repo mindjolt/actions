@@ -1,32 +1,21 @@
- 
-Drone Config Service Plugin
-===========================
+### Config
+The config action allows for simple set up of config service roots in
+a workflow.
 
-A Drone plugin that can create or update Config Roots for any Config Microservice instance.
-This can be used to initialize a config root at build time.
+Parameters:
 
-The settings available in this plugin are:
-
-* `service` - The FQ URL of the config service. For example, for the sdk settings config service,
-   the value would be `https://origin-prd-config-sdk-settings.jc-gs.com/v1`.
-* `root` - The case-sensitive root name to create/update.
-* `sandbox` - The config service sandbox to use. Defaults to `prod`.
-* `json` - The JSON string to use for the root. Default to `{}`.
-* `overwrite` - If present, the specified json string will overwrite any current value. 
-   If absent (the default), then a pre-existing root will not be overwritten.
-
-For example:
+* `service` - The config service URL.
+* `root` - The config root to attempt to update.
+* `sandbox` - The config sandbox, defaults to `prod`.
+* `json` - The JSON for the root, defaults to `{}`.
+* `overwrite` - If true, this will replace the current root with `json`. If false, will only update the config root if it doesn't already exist. Defaults to false.
 
 ```yaml
-- name: Config Root Update
-  image: sgn0/drone-config-service
-  depends_on: [ "${DRONE_BRANCH} build" ]
-  settings:
+- name: Config Root Initialize
+  uses: mindjolt/actions/config@v2
+  with:
     service: https://origin-prd-config-sdk-settings.jc-gs.com/v1
-    root: JamCity.CommonSdk
-    json: "{}"
+    root: JamCity.GemSdk
+    json: '{ "key": {} }'
 ```
-
-
-
 

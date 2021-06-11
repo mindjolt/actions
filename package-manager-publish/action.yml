@@ -13,10 +13,10 @@ inputs:
     required: false
   packageName:
     description: 'Name of the package (JamCity.CommonSdk, JamCity.ConfigSdk, etc).'
-    required: true
+    required: false
   packageVersion:
     description: 'The version of package.'
-    required: true
+    required: false
   packageZip:
     description: 'Path to zip file containing package to publish'
     required: true
