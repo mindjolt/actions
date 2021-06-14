@@ -1,0 +1,15 @@
+name: 'Package Json Env'
+description: 'Parses package.json file into github actions environment variables'
+inputs:
+  packageJson:
+    description: 'Path to package.json to parse'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        if [ -e "${{inputs.packageJson}}" ]; then
+          cat "${{inputs.packageJson}}" | jq -r 'to_entries[] | "PACKAGE_\(.key | [ splits("(?=[A-Z])") ] | map(select(. != "")) | join("_") | ascii_upcase)=\(.value)"' >> $GITHUB_ENV
+        fi
+      shell: bash
+      
