@@ -91,6 +91,8 @@ else
   uri="${artifactoryRoot}/${releaseRepo}/${packageName/.//}/$packageVersion"
 fi
 
+[ ! -r "$packageZip" ] && echo "$packageZip does not exist!" && exit 1
+[ ! -r "$packageJson" ] && echo "$packageJson does not exist!" && exit 1
 
 curl -f -s -X PUT -u "$artifactoryUser:$artifactoryPassword" --data-binary "@$packageZip" "$uri/${packageName}.zip" > /tmp/curl.out 2>&1 || { cat /tmp/curl.out && exit 1; }
 curl -f -s -X PUT -u "$artifactoryUser:$artifactoryPassword" --data-binary "@$packageJson" "$uri/package.json" > /tmp/curl.out 2>&1 || { cat /tmp/curl.out && exit 1; }
