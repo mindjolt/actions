@@ -33,6 +33,9 @@ jobs:
         docker push sgn0/config-service-action:${{steps.vars.outputs.tag}}
     - name: Build SBT Unity Docker Image
       run: |
-        cd sbt-unity
-        docker build . --file Dockerfile --tag sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
+        cd sbt-unity/csharp-build-image
+        docker build . --build-arg tag=${{steps.vars.outputs.tag}} --file Dockerfile --tag sgn0/csharp-build-env:${{steps.vars.outputs.tag}}
+        docker push sgn0/csharp-build-env:${{steps.vars.outputs.tag}}
+        cd ../sbt-image
+        docker build . --build-arg tag=${{steps.vars.outputs.tag}} --file Dockerfile --tag sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
         docker push sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
