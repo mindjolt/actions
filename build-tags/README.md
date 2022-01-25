@@ -8,6 +8,16 @@ This action generates a list of tags that enables continuos integration in a saf
 
 **Optional** The current build/package version. Usually this value comes from the service package manager file like `build.gradle`, `build.sbt` or `package.json`
 
+### `tag-separator`
+
+**Default** `\n` (new line)
+The tag array will be joint using the `tag-separator` character
+
+### `base-tags`
+
+**Optional**
+New line separated list of tags to be included with the generated tags.
+
 ## Outputs
 
 ### `tags`
@@ -60,12 +70,11 @@ Given a commit sha of `f593409` and a `build-version` input of `0.1.1`.
     # Recommended additional docker metadata (like labels)
     - name: Docker meta
       id: docker_meta
-      uses: crazy-max/ghaction-docker-meta@v1
+      uses: docker/metadata-action@v3
       with:
+        tags: "${{steps.get_tags.outputs.tags}}"
         images: ghcr.io/${{ github.repository }}
-        tag-custom: "${{steps.get_tags.outputs.tags}}"
-        tag-sha: true
-        tag-latest: true
+
     # Login and setup ...
     # Tag your image
     - name: Build and push
@@ -77,5 +86,44 @@ Given a commit sha of `f593409` and a `build-version` input of `0.1.1`.
           "SERVICE_MAIN_CLASS=${{ steps.read_mainClass.outputs.value }}"
           "COMMIT_HASH=${{ github.sha }}"
         tags: ${{ steps.docker_meta.outputs.tags }}
-        labels: ${{ steps.docker_meta.outputs.labels }}    
+        labels: ${{ steps.docker_meta.outputs.labels }}
+```
+
+## Example usage with extra tags
+
+Use the `base-tags` to add custom generated tags. For example you can use the `docker/metadata-action@v3` [tags syntax](https://github.com/docker/metadata-action#tags-input)
+
+```yaml
+    - name: Get gradle version
+      id: package_version
+      run: echo "::set-output name=version::`./gradlew -q printVersion`"
+
+    - uses: mindjolt/actions/build-tags@v2
+      id: get_tags
+      with:
+        build-version: ${{steps.package_version.outputs.version}}
+        base-tags: |
+          type=sha,prefix=sha-
+          ${{myCustomTag}}
+
+    # Recommended additional docker metadata (like labels)
+    - name: Docker meta
+      id: docker_meta
+      uses: docker/metadata-action@v3
+      with:
+        tags: "${{steps.get_tags.outputs.tags}}"
+        images: ghcr.io/${{ github.repository }}
+
+    # Login and setup ...
+    # Tag your image
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        build-args: |
+          "SERVICE_MAIN_CLASS=${{ steps.read_mainClass.outputs.value }}"
+          "COMMIT_HASH=${{ github.sha }}"
+        tags: ${{ steps.docker_meta.outputs.tags }}
+        labels: ${{ steps.docker_meta.outputs.labels }}
 ```
