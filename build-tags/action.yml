@@ -11,7 +11,6 @@ inputs:
   base-tags:  # from package.json, build.gradle or build.sbt
     description: 'list of tags (one tag per line)'
     required: false
-    default: []
 outputs:
   tags: # id of output
     description: 'new line separated (by default) list of tags'
