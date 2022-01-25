@@ -12,9 +12,9 @@ try {
   const ref = process.env.GITHUB_REF || "unknown";
 
   let tags = T.getTags(shortSHA, ref, buildTag);
-  core.info(`Generated tags ${outTags}`);
 
   const outTags = tags.concat(baseTags).join(tagSep);
+  core.info(`Generated tags ${outTags}`);
 
   core.setOutput("repo", repoName);
   core.setOutput("sha", shortSHA);
