@@ -1,0 +1,36 @@
+name: 'k6 performance test'
+description: 'Runs a performance test using k6'
+inputs:
+  version:
+    description: "Version of k6 to install"
+    required: false
+    default: "v0.39.0"
+  archiveUrl:
+    description: "URL of tar.gz archive to use for installing k6 binary"
+    required: false
+  script:
+    description: "Full path to the k6 script to run"
+    required: true
+  flags:
+    description: "k6 command line flags"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install k6
+      id: install_k6
+      run: |
+        if [ ! -z "${{inputs.archiveUrl}}" ]; then
+          curl ${{inputs.archiveUrl}} | tar xvz --strip-components 1
+        elif [ ! -z "${{inputs.version}}" ]; then
+          curl https://github.com/grafana/k6/releases/download/${{inputs.version}}/k6-${{inputs.version}}-linux-arm64.tar.gz -L | tar xvz --strip-components 1
+        else 
+          curl https://github.com/grafana/k6/releases/download/v0.39.0/k6-v0.39.0-linux-arm64.tar.gz -L | tar xvz --strip-components 1
+        fi
+      shell: bash
+    - name: Run performance test
+      id: perf_test
+      run: |
+        ./k6 run ${{inputs.flags}} ${{inputs.script}}
+      shell: bash

@@ -13,4 +13,4 @@ This repo contains a collection of Jam City github actions for use in
 * [sbt-unity](sbt-unity/README.md) - Action for building SDKs using the JC sbt plugin.
 * [build-tags](build-tags/README.md) - Action for generating a list of standard docker image tags.
 * [package-json-env](package-json-env/README.md) - Converts a `package.json` to github actions environment variables.
-
+* [k6-perf-test](k6-perf-test/README.md) - Action for running a performance test using k6.
