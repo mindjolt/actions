@@ -21,6 +21,11 @@ jobs:
         cd confluence
         docker build . --file Dockerfile --tag sgn0/confluence-action:${{steps.vars.outputs.tag}} 
         docker push sgn0/confluence-action:${{steps.vars.outputs.tag}}
+    - name: SDK Release Docker Image
+      run: |
+        cd sdk-release
+        docker build . --file Dockerfile --tag sgn0/sdk-release:${{steps.vars.outputs.tag}} 
+        docker push sgn0/sdk-release:${{steps.vars.outputs.tag}}
     - name: Build Nuget Publish Image
       run: |
         cd nuget-publish

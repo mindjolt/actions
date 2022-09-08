@@ -1,0 +1,18 @@
+# action.yml
+name: 'SDK Release'
+description: 'Performs releases on SDK projects'
+inputs:
+  repo:
+    description: 'The name of the mindjolt github repo to release'
+    required: true
+  type:
+    description: 'The type of release, one of: patch, minor, or major'
+    required: true
+    default: 'minor'
+  token:
+    description: 'Github access token'
+    required: true
+runs:
+  using: 'docker'
+  image: docker://sgn0/sdk-release:main
+  entrypoint: '/release.sh'
