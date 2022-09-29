@@ -10,5 +10,5 @@ inputs:
     default: 'packageVersion'
 runs:
   using: 'docker'
-  image: docker://sgn0/snapshot-bump-action:main
+  image: docker://sgn0/snapshot-bump-action:snapshot-bump-action
   entrypoint: '/snapshot-bump.sh --file $INPUT_FILE --prop $INPUT_PROPERTY'
