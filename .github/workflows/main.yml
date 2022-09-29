@@ -44,3 +44,8 @@ jobs:
         cd ../sbt-image
         docker build . --build-arg tag=${{steps.vars.outputs.tag}} --file Dockerfile --tag sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
         docker push sgn0/sbt-unity-action:${{steps.vars.outputs.tag}}
+    - name: Build Snapshot Bump Docker Image
+      run: |
+        cd snapshot-bump
+        docker build . --file Dockerfile --tag sgn0/snapshot-bump-action:${{steps.vars.outputs.tag}} 
+        docker push sgn0/snapshot-bump-action:${{steps.vars.outputs.tag}}
