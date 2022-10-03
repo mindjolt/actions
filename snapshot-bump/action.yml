@@ -1,0 +1,13 @@
+# action.yml
+name: 'Snapshot Bump'
+description: 'Bump the version of a gradle project to the next SNAPSHOT'
+inputs:
+  file:
+    description: 'the properties file where version is held'
+    default: 'gradle.properties'
+  property:
+    description: 'the property name for the version'
+    default: 'packageVersion'
+runs:
+  using: 'docker'
+  image: docker://sgn0/snapshot-bump-action:snapshot-bump-action

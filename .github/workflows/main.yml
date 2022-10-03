@@ -16,6 +16,11 @@ jobs:
     - name: Get the version
       id: vars
       run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
+    - name: Build Snapshot Bump Docker Image
+      run: |
+        cd snapshot-bump
+        docker build . --file Dockerfile --tag sgn0/snapshot-bump-action:${{steps.vars.outputs.tag}} 
+        docker push sgn0/snapshot-bump-action:${{steps.vars.outputs.tag}}
     - name: Build Confluence Docker Image
       run: |
         cd confluence
