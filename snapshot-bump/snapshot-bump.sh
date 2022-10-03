@@ -51,7 +51,7 @@ if ! [[ `grep $INPUT_PROPERTY $INPUT_FILE` ]]; then
   help;
 fi
 
-VERSION_PROP=`grep packageVersion gradle.properties` # ex. packageVersion=1.7.8
+VERSION_PROP=`grep $INPUT_PROPERTY $INPUT_FILE` # ex. packageVersion=1.7.8
 VERSION=${VERSION_PROP#*=} # ex. 1.7.8
 
 echo "current version: $VERSION"
