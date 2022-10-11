@@ -7,11 +7,11 @@ key="$1"
 
 case $key in
     --user)
-    artifactoryUser="$2"
+    confluenceUser="$2"
     shift; shift
     ;;
     --password)
-    artifactoryPassword="$2"
+    confluence Password="$2"
     shift; shift
     ;;
     --page)
@@ -65,10 +65,10 @@ latexPath="$HOME/.local/share/pandoc/templates"
   cp "$GITHUB_ACTION_PATH/eisvogel.latex" "$latexPath/eisvogel.latex"
 }
 
-AUTH="$artifactoryUser:$artifactoryPassword"
+AUTH="$confluence User:$confluence Password"
 
-[ -z "$artifactoryUser" ] && echo "Missing user parameter" && exit 1
-[ -z "$artifactoryPassword" ] && echo "Missing password parameter" && exit 1
+[ -z "$confluence User" ] && echo "Missing user parameter" && exit 1
+[ -z "$confluence Password" ] && echo "Missing password parameter" && exit 1
 
 if [ -z "$confluenceUrl" ]; then
   confluenceUrl="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
@@ -129,7 +129,7 @@ done
 version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$confluenceUrl/$confluencePage?expand=version" | jq ".version.number")
 version=$(($version + 1))
 
-body=$(cat "$body" | sed -e 's/"/\\"/g')
+body=$(cat "$body" | tr '\n' ' ' | sed 's/<a[^>]*>//g' | sed 's/<\/a>//g' | sed -e 's/"/\\"/g')
 
 if [ -z "$toc" ] || [ -n "$toPdf" ]; then
   toc=""

@@ -70,7 +70,7 @@ done
 version=$(curl --silent --user $AUTH --request GET --header 'Accept: application/json' --url "$INPUT_URI/$INPUT_PAGE?expand=version" | jq ".version.number")
 version=$(($version + 1))
 
-body=$(cat "$body" | sed -e 's/"/\\"/g')
+body=$(cat "$body" | tr '\n' ' ' | sed 's/<a[^>]*>//g' | sed 's/<\/a>//g' | sed -e 's/"/\\"/g')
 
 if [ "$INPUT_TOC" != "true" ] || [ "$INPUT_TOPDF" == "true" ]; then
   toc=""
