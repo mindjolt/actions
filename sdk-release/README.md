@@ -33,7 +33,6 @@ In the develop branch:
 
 Parameters:
 
-* `repo` - The mindjolt repo to release. For example, 'unity-common-sdk' or 'analytics-sdk'.
 * `type` - The type of the release, one of: patch. minor or major.
 * `token` - Github access token with sufficient persmission to checkout and push.
 
@@ -62,7 +61,6 @@ jobs:
       - name: Release
         uses: mindjolt/actions/sdk-release@v2
         with:
-          repo: ${{ github.event.repository.name }}
           type: "${{ inputs.type }}"
           token: "${{ secrets.MJ_GITHUB_TOKEN }}"
 ```

@@ -4,7 +4,8 @@ description: 'Performs releases on SDK projects'
 inputs:
   repo:
     description: 'The name of the mindjolt github repo to release'
-    required: true
+    required: false
+    deprecationMessage: No longer needed 
   type:
     description: 'The type of release, one of: patch, minor, or major'
     required: true
@@ -13,6 +14,97 @@ inputs:
     description: 'Github access token'
     required: true
 runs:
-  using: 'docker'
-  image: docker://sgn0/sdk-release:main
-  entrypoint: '/release.sh'
+  using: 'composite'
+  steps:
+      - name: Cloning ${{github.ref}}
+        uses: actions/checkout@v2
+      - run: |
+          # Set up git
+          export GITHUB_TOKEN=${{inputs.token}}
+          git config --global user.name "${{github.actor}}"
+          git config --global user.email "${{github.actor}}@jamcity.com"
+          git tag -l | xargs git tag -d
+          git fetch --tags
+          git fetch origin
+          git checkout develop
+          git reset --hard origin/develop
+          git checkout main
+          git reset --hard origin/main
+            
+          # Get version info
+          curVer=$(sed -n 's/version := "\(.*\)"/\1/p' build.sbt)
+          read -r -a parts <<< "${curVer//./ }"
+          major=${parts[0]}
+          minor=${parts[1]}
+          patch=${parts[2]}
+                        
+          if [ "${{inputs.type}}" == "patch" ]; then
+            relVer="$major.$minor.$((patch+1))"
+            nextVer="$major.$((minor+1)).0"
+          elif [ "${{inputs.type}}" == "major" ]; then
+            relVer="$((major+1)).0.0"
+            nextVer="$((major+1)).1.0"
+          elif [ "${{inputs.type}}" == "minor" ]; then
+            relVer="$major.$((minor+1)).0"
+            nextVer="$major.$((minor+2)).0"
+          fi
+          echo "Current Version: $curVer"
+          echo "Release Version: $relVer"
+          echo "Next Version: $nextVer"
+          git checkout develop
+
+          # Update change log
+          if [ -e "CHANGELOG.md" ]; then
+            repo=${{github.repository}}
+            perl -pi.bak -0pe "s/\[.*\]\(.*\) \(Unreleased\)/[$relVer](http:\/\/github.com\/${repo//\//\\/}\/compare\/$curVer...$relVer) ($(date '+%Y-%m-%d'))/" CHANGELOG.md
+            changefile=CHANGELOG.md
+          else
+            ! grep -q "\*Unreleased\*" CHANGES.md && echo 'Missing "Unreleased" label in CHANGES.md' && exit 1
+            sed -i.bak "s/\*Unreleased\*/*$(date '+%Y-%m-%d')*/" CHANGES.md
+            sed -i.bak -E -e "/[0-9]+\.[0-9]+\.[0-9]+/{s//$relVer/;:p" -e "n;bp" -e "}" CHANGES.md
+            changefile=CHANGES.md
+          fi
+
+          # Update build.sbt
+          ! grep -q 'version := \".*-SNAPSHOT\"' build.sbt && echo 'Missing identifiable SNAPSHOT version in build.sbt' && exit 1
+          sed -i.bak "s/version := \".*-SNAPSHOT\"/version := \"$relVer\"/" build.sbt
+
+          # Tag, commit and reset main
+          git add $changefile build.sbt 
+          git commit -m "updated version"
+          git tag "$relVer"
+          git checkout main
+          git reset --hard develop
+
+          # Update change log
+          git checkout develop
+          if [ -e "CHANGELOG.md" ]; then
+            perl -pi.bak -0pe "s/^# Changelog/# Changelog\n\n## [$nextVer]() (Unreleased)\n\n### Features\n/" CHANGELOG.md
+          else
+            delim=$(head -c ${#nextVer} < /dev/zero | tr '\0' '-')
+            sed -i.bak "/${relVer//./\\.}/i\\
+            $nextVer\\
+            $delim\\
+            \\
+            *Unreleased*\\
+            \\
+            **Features**\\
+            \\
+            \\
+            " CHANGES.md
+          fi
+          
+          # Update build.sbt
+          sed -i.bak "s/version := \".*\"/version := \"$nextVer-SNAPSHOT\"/" build.sbt
+
+          # Commit develop branch
+          git add $changefile build.sbt
+          git commit -m "updated version"
+          
+          # push changes
+          git push -f
+          git push --tags
+          git checkout main
+          git push -f
+          git push --tags
+        shell: bash
