@@ -10,7 +10,7 @@ jobs:
     runs-on: [ self-hosted, docker ]
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Login to DockerHub Registry
       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USER }} --password-stdin
     - name: Get the version
