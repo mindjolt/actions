@@ -18,6 +18,8 @@ runs:
   steps:
       - name: Cloning ${{github.ref}}
         uses: actions/checkout@v2
+        with: 
+            token: ${{inputs.token}} 
       - run: |
           # Set up git
           export GITHUB_TOKEN=${{inputs.token}}
