@@ -27,3 +27,10 @@ to develop, a release can be kicked off using the following process:
 2. Wait for CI to run, which will create a release-pr against `main`, including a semver bump and a changelog.
 3. Merge the release PR.
 4. Wait for CI, which will produce the builds and merge the changes back to the `develop` branch.
+
+
+If you don't use conventional commits, then you can inform release-please of your indended version bump by committing as follows:
+```shell
+git commit --allow-empty -m "chore: release 2.0.0" -m "Release-As: 2.0.0"
+```
+Push that to `main` to kick off the release process.
