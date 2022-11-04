@@ -15,3 +15,15 @@ This repo contains a collection of Jam City github actions for use in
 * [package-json-env](package-json-env/README.md) - Converts a `package.json` to github actions environment variables.
 * [k6-perf-test](k6-perf-test/README.md) - Action for running a performance test using k6.
 * [snapshot-bump](snapshot-bump/README.md) - Action for bumping snapshot versions.
+
+
+## Releases
+
+Feature branches should be created off of the (default) `develop` branch, and
+[Conventional Commits](https://www.conventionalcommits.org/) should be used in
+order to drive appropriate semver bumps and changelogs. Once changes are merged
+to develop, a release can be kicked off using the following process:
+1. Merge `develop` into `main`
+2. Wait for CI to run, which will create a release-pr against `main`, including a semver bump and a changelog.
+3. Merge the release PR.
+4. Wait for CI, which will produce the builds and merge the changes back to the `develop` branch.
