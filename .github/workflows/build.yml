@@ -122,7 +122,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            sgn0/csharp-unity-action
+            sgn0/sbt-unity-action
           tags: |
             type=semver,pattern=v{{version}},value=${{ inputs.version }}
             type=semver,pattern=v{{major}}.{{minor}},value=${{ inputs.version }}
