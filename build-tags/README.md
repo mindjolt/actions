@@ -60,9 +60,9 @@ Given a commit sha of `f593409` and a `build-version` input of `0.1.1`.
 ```yaml
     - name: Get gradle version
       id: package_version
-      run: echo "::set-output name=version::`./gradlew -q printVersion`"
+      run: echo "version=`./gradlew -q printVersion`" >> $GITHUB_OUTPUT
 
-    - uses: mindjolt/actions/build-tags@2.5.0
+    - uses: mindjolt/actions/build-tags@2.9.2
       id: get_tags
       with:
         build-version: ${{steps.package_version.outputs.version}}
@@ -96,9 +96,9 @@ Use the `base-tags` to add custom generated tags. For example you can use the `d
 ```yaml
     - name: Get gradle version
       id: package_version
-      run: echo "::set-output name=version::`./gradlew -q printVersion`"
+      run: echo "version=`./gradlew -q printVersion`" >> $GITHUB_OUTPUT
 
-    - uses: mindjolt/actions/build-tags@2.5.0
+    - uses: mindjolt/actions/build-tags@2.9.2
       id: get_tags
       with:
         build-version: ${{steps.package_version.outputs.version}}

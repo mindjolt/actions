@@ -15,5 +15,5 @@ outputs:
   tags: # id of output
     description: 'new line separated (by default) list of tags'
 runs:
-  using: 'node12'
-  main: 'index.js'
+  using: 'node16'
+  main: 'dist/index.js'
