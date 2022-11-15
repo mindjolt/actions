@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-please:
+  prep-release:
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release-please.outputs.release_created }}
