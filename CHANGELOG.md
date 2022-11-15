@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.3](https://github.com/mindjolt/actions/compare/v2.10.2...v2.10.3) (2022-11-15)
+
+
+### Bug Fixes
+
+* **ci:** add fully qualified sem ver for the csharp-build-env so it can be used by the sbt-unity-action Dockerfile ([5affc93](https://github.com/mindjolt/actions/commit/5affc93ebb6270cb49d81e5422c6bf346b87bc3d))
+
 ## [2.10.2](https://github.com/mindjolt/actions/compare/v2.10.1...v2.10.2) (2022-11-15)
 
 
