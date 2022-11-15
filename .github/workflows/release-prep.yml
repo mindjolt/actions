@@ -7,8 +7,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  prep-release:
-    uses: 'mindjolt/github-workflows/.github/workflows/release-please.yml@main'
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release-please.outputs.release_created }}
+      version: ${{ steps.release-please.outputs.version }}
+    steps:
+      - id: 'release-please'
+        uses: google-github-actions/release-please-action@v3
+        with:
+          command: manifest
+          default-branch: main
 
   build:
     needs: prep-release
