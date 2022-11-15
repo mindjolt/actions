@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.2](https://github.com/mindjolt/actions/compare/v2.10.1...v2.10.2) (2022-11-15)
+
+
+### Bug Fixes
+
+* **ci:** use correct job output name for the final version ([817bccf](https://github.com/mindjolt/actions/commit/817bccf6e3b8101d412b290a77d8108869a3054a))
+
 ## [2.10.1](https://github.com/mindjolt/actions/compare/v2.10.0...v2.10.1) (2022-11-15)
 
 
