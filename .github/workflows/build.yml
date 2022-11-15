@@ -99,6 +99,7 @@ jobs:
             sgn0/csharp-build-env
           tags: |
             type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=semver,pattern=v{{version}},value=${{ inputs.version }}
       - name: Build and push sbt-unity
         uses: docker/build-push-action@v3
         with:
@@ -120,5 +121,6 @@ jobs:
         with:
           context: ./sbt-unity/sbt-image
           push: true
+          build-args: "tag=v${{ inputs.version }}"
           tags: "${{ steps.sbt-image-meta.outputs.tags }}"
           labels: "${{ steps.sbt-image-meta.outputs.labels }}"
