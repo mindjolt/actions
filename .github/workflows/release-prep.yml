@@ -22,6 +22,7 @@ jobs:
   build:
     needs: prep-release
     if: needs.prep-release.outputs.release_created
+    secrets: inherit
     uses: './.github/workflows/build.yml'
     with:
       version: ${{ needs.prep-release.outputs.package_version }}
