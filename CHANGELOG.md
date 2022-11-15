@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.1](https://github.com/mindjolt/actions/compare/v2.10.0...v2.10.1) (2022-11-15)
+
+
+### Bug Fixes
+
+* **ci:** inherit secrets when calling the build workflow ([2157f53](https://github.com/mindjolt/actions/commit/2157f533403eb4426f295785488c2e26bf2eec79))
+
 ## [2.10.0](https://github.com/mindjolt/actions/compare/v2.9.1...v2.10.0) (2022-11-15)
 
 
