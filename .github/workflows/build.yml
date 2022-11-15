@@ -1,0 +1,124 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: a valid semver
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: a valid semver
+
+jobs:
+  Build:
+    runs-on: [ self-hosted, docker ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USER }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: snapshot-bump docker meta
+        id: snapshot-bump-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/snapshot-bump-action
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push snapshot-bump
+        uses: docker/build-push-action@v3
+        with:
+          context: ./snapshot-bump
+          push: true
+          tags: "${{ steps.snapshot-bump-meta.outputs.tags }}"
+          labels: "${{ steps.snapshot-bump-meta.outputs.labels }}"
+
+      - name: confluence docker meta
+        id: confluence-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/confluence-action
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push confluence
+        uses: docker/build-push-action@v3
+        with:
+          context: ./confluence
+          push: true
+          tags: "${{ steps.confluence-meta.outputs.tags }}"
+          labels: "${{ steps.confluence-meta.outputs.labels }}"
+
+      - name: nuget docker meta
+        id: nuget-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/nuget-publish-action
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push nuget
+        uses: docker/build-push-action@v3
+        with:
+          context: ./nuget-publish
+          push: true
+          tags: "${{ steps.nuget-meta.outputs.tags }}"
+          labels: "${{ steps.nuget-meta.outputs.labels }}"
+
+      - name: config docker meta
+        id: config-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/config-service-action
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push config
+        uses: docker/build-push-action@v3
+        with:
+          context: ./config
+          push: true
+          tags: "${{ steps.config-meta.outputs.tags }}"
+          labels: "${{ steps.config-meta.outputs.labels }}"
+
+      - name: sbt-csharp-build docker meta
+        id: sbt-csharp-build-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/csharp-build-env
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push sbt-unity
+        uses: docker/build-push-action@v3
+        with:
+          context: ./sbt-unity/csharp-build-image
+          push: true
+          tags: "${{ steps.sbt-csharp-build-meta.outputs.tags }}"
+          labels: "${{ steps.sbt-csharp-build-meta.outputs.labels }}"
+
+      - name: sbt-image docker meta
+        id: sbt-image-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            sgn0/sbt-unity-action
+          tags: |
+            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+      - name: Build and push sbt-unity
+        uses: docker/build-push-action@v3
+        with:
+          context: ./sbt-unity/sbt-image
+          push: true
+          tags: "${{ steps.sbt-image-meta.outputs.tags }}"
+          labels: "${{ steps.sbt-image-meta.outputs.labels }}"
