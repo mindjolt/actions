@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.0](https://github.com/mindjolt/actions/compare/v2.10.3...v2.11.0) (2022-11-16)
+
+
+### Features
+
+* bump minor version over patch during snapshot bump ([d66d5b3](https://github.com/mindjolt/actions/commit/d66d5b31e707285ca6e1b5ef1913acfccad5e200))
+
 ## [2.10.3](https://github.com/mindjolt/actions/compare/v2.10.2...v2.10.3) (2022-11-15)
 
 
