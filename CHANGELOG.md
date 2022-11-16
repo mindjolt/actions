@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.11.1](https://github.com/mindjolt/actions/compare/v2.11.0...v2.11.1) (2022-11-16)
+
+
+### Bug Fixes
+
+* Fixed confluence-mac/confluence.sh. Stupid bugs. ([9f7a224](https://github.com/mindjolt/actions/commit/9f7a2242425e613f00d6e986252368364c711063))
+
+
+### Miscellaneous Chores
+
+* release 2.11.1 ([6d4a6fb](https://github.com/mindjolt/actions/commit/6d4a6fb65c603752acabd407bac46cbae626203b))
+
 ## [2.11.0](https://github.com/mindjolt/actions/compare/v2.10.3...v2.11.0) (2022-11-16)
 
 
