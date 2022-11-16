@@ -11,7 +11,7 @@ case $key in
     shift; shift
     ;;
     --password)
-    confluence Password="$2"
+    confluencePassword="$2"
     shift; shift
     ;;
     --page)
@@ -65,10 +65,10 @@ latexPath="$HOME/.local/share/pandoc/templates"
   cp "$GITHUB_ACTION_PATH/eisvogel.latex" "$latexPath/eisvogel.latex"
 }
 
-AUTH="$confluence User:$confluence Password"
+AUTH="$confluenceUser:$confluencePassword"
 
-[ -z "$confluence User" ] && echo "Missing user parameter" && exit 1
-[ -z "$confluence Password" ] && echo "Missing password parameter" && exit 1
+[ -z "$confluenceUser" ] && echo "Missing user parameter" && exit 1
+[ -z "$confluencePassword" ] && echo "Missing password parameter" && exit 1
 
 if [ -z "$confluenceUrl" ]; then
   confluenceUrl="https://socialgamingnetwork.jira.com/wiki/rest/api/content"
