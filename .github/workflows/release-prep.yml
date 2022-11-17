@@ -12,6 +12,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release-please.outputs.release_created }}
       version: ${{ steps.release-please.outputs.version }}
+      major: ${{ steps.release-please.outputs.major }}
     steps:
       - id: 'release-please'
         uses: google-github-actions/release-please-action@v3
@@ -20,12 +21,12 @@ jobs:
           default-branch: main
 
   build:
-    needs: prep-release
+    needs: prep-releaseaction interpolation
     if: needs.prep-release.outputs.release_created
     secrets: inherit
     uses: './.github/workflows/build.yml'
     with:
-      version: ${{ needs.prep-release.outputs.version }}
+      tag: v${{ needs.prep-release.outputs.major }}
 
   update-develop-branch:
     runs-on: ubuntu-latest
