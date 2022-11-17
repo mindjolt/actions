@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.12.0](https://github.com/mindjolt/actions/compare/v2.11.1...v2.12.0) (2022-11-17)
+
+
+### Features
+
+* **ci:** asign tags explicitly in build.yml via inputs ([d92a752](https://github.com/mindjolt/actions/commit/d92a752f02869f91a79f35276e54cea796688c22))
+* **ci:** tag the repo with the major version when releasing ([bdd61e7](https://github.com/mindjolt/actions/commit/bdd61e7ac49e744cbd320acfe4530c84e8bcae1e))
+
+
+### Bug Fixes
+
+* **ci:** properly condition major version tagging ([d221d6d](https://github.com/mindjolt/actions/commit/d221d6d112ccb99e05463566127fca5d7b4d78e4))
+* update all docker based actions to assume the v2 tag version ([38c783a](https://github.com/mindjolt/actions/commit/38c783a27080658add199ad8d12a76f80329898a))
+
 ## [2.11.1](https://github.com/mindjolt/actions/compare/v2.11.0...v2.11.1) (2022-11-16)
 
 
