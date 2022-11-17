@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.1](https://github.com/mindjolt/actions/compare/v2.12.0...v2.12.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* **ci:** force push the major version tags ([224a895](https://github.com/mindjolt/actions/commit/224a895b480b2e49bbd347885392ae64c020b947))
+
 ## [2.12.0](https://github.com/mindjolt/actions/compare/v2.11.1...v2.12.0) (2022-11-17)
 
 
