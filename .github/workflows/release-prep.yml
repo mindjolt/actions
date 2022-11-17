@@ -30,6 +30,7 @@ jobs:
 
   tag-repo:
     runs-on: ubuntu-latest
+    if: needs.prep-release.outputs.release_created
     needs: 
       - prep-release
     steps:
