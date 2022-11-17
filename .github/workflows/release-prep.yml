@@ -40,7 +40,7 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git tag v${{ needs.prep-release.outputs.major }}
-          git push --tags
+          git push --tags --force
 
   update-develop-branch:
     runs-on: ubuntu-latest
