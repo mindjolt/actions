@@ -34,3 +34,8 @@ If you don't use conventional commits, then you can inform release-please of you
 git commit --allow-empty -m "chore: release 2.0.0" -m "Release-As: 2.0.0"
 ```
 Push that to `main` to kick off the release process.
+
+## Note
+
+Docker based actions explicitly reference `v2` tags. Next time we do a major version update, we'll want to update these as well.
+We may also want to factor the actions into their own repos so they can be versioned individually at that time.

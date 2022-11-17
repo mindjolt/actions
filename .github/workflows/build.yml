@@ -3,16 +3,16 @@ name: Build
 on:
   workflow_dispatch:
     inputs:
-      version:
+      tag:
         required: true
         type: string
-        description: a valid semver
+        description: tag to be added to docker images and git repo
   workflow_call:
     inputs:
-      version:
+      tag:
         required: true
         type: string
-        description: a valid semver
+        description:  tag to be added to docker images and git repo
 
 jobs:
   Build:
@@ -34,7 +34,7 @@ jobs:
           images: |
             sgn0/snapshot-bump-action
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push snapshot-bump
         uses: docker/build-push-action@v3
         with:
@@ -50,7 +50,7 @@ jobs:
           images: |
             sgn0/confluence-action
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push confluence
         uses: docker/build-push-action@v3
         with:
@@ -66,7 +66,7 @@ jobs:
           images: |
             sgn0/nuget-publish-action
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push nuget
         uses: docker/build-push-action@v3
         with:
@@ -82,7 +82,7 @@ jobs:
           images: |
             sgn0/config-service-action
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push config
         uses: docker/build-push-action@v3
         with:
@@ -98,8 +98,7 @@ jobs:
           images: |
             sgn0/csharp-build-env
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
-            type=semver,pattern=v{{version}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push sbt-unity
         uses: docker/build-push-action@v3
         with:
@@ -115,12 +114,12 @@ jobs:
           images: |
             sgn0/sbt-unity-action
           tags: |
-            type=semver,pattern=v{{major}},value=${{ inputs.version }}
+            type=raw,value=${{ inputs.tag }}
       - name: Build and push sbt-unity
         uses: docker/build-push-action@v3
         with:
           context: ./sbt-unity/sbt-image
           push: true
-          build-args: "tag=v${{ inputs.version }}"
+          build-args: "tag=${{ inputs.tag }}"
           tags: "${{ steps.sbt-image-meta.outputs.tags }}"
           labels: "${{ steps.sbt-image-meta.outputs.labels }}"
