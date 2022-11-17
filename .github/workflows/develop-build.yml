@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     needs: prep-releaseaction interpolation
-    if: needs.prep-release.outputs.release_created
     secrets: inherit
     uses: './.github/workflows/build.yml'
     with:
