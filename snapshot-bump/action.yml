@@ -10,4 +10,4 @@ inputs:
     default: 'packageVersion'
 runs:
   using: 'docker'
-  image: snapshot-bump/Dockerfile
+  image: Dockerfile
