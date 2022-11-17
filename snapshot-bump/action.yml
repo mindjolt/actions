@@ -10,4 +10,4 @@ inputs:
     default: 'packageVersion'
 runs:
   using: 'docker'
-  image: Dockerfile
+  image: docker://sgn0/snapshot-bump-action:v2

@@ -17,5 +17,5 @@ inputs:
   
 runs:
   using: 'docker'
-  image: docker://sgn0/nuget-publish-action:main
+  image: docker://sgn0/nuget-publish-action:v2
   entrypoint: '/publish.sh'

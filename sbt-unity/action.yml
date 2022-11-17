@@ -11,8 +11,7 @@ inputs:
     default: 'target/package.json'
 runs:
   using: 'docker'
-  image: docker://sgn0/sbt-unity-action:main
+  image: docker://sgn0/sbt-unity-action:v2
   entrypoint: '/build.sh'
   post-entrypoint: '/cleanup.sh'
-  
   

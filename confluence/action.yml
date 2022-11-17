@@ -35,5 +35,5 @@ inputs:
     default: 'false'
 runs:
   using: 'docker'
-  image: docker://sgn0/confluence-action:main
+  image: docker://sgn0/confluence-action:v2
   entrypoint: '/confluence.sh'

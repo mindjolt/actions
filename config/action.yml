@@ -21,6 +21,6 @@ inputs:
     default: false
 runs:
   using: 'docker'
-  image: docker://sgn0/config-service-action:main
+  image: docker://sgn0/config-service-action:v2
   entrypoint: '/config-service.sh'
   
