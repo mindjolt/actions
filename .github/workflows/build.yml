@@ -16,7 +16,7 @@ on:
 
 jobs:
   Build:
-    runs-on: [ self-hosted, docker ]
+    runs-on: [ self-hosted, k8s-svc-runners-dind ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
