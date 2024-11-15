@@ -5,6 +5,9 @@ inputs:
   openapi_file:
     description: 'The name of the openapi file to publish'
     required: true
+  service_repo:
+    description: 'The name of the service repo. This is used as part of the path to the file in the documentation repo'
+    required: true
   token:
     description: 'Github access token'
     required: true
@@ -17,7 +20,7 @@ runs:
         token: ${{inputs.token}}
     - run: |
            apiversion=`yq '.info.version' < ${{ inputs.openapi_file }}`
-           destinationFolder=services/$SERVICE_NAME/$apiversion
+           destinationFolder=services/${{ inputs.service_repo }}/$apiversion
            echo "ApiVersion=$apiversion" >> "$GITHUB_ENV"
            echo "DestinationFolder=$destinationFolder" >> "$GITHUB_ENV"
     - run: |
