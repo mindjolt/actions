@@ -1,0 +1,36 @@
+# action.yml
+name: 'Publish OpenAPI'
+description: 'Publishes OpenAPI YAML to our API repo'
+inputs:
+  openapi_file:
+    description: 'The name of the openapi file to publish'
+    required: true
+  token:
+    description: 'Github access token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Cloning ${{github.ref}}
+      uses: actions/checkout@v3.3.0
+      with:
+        token: ${{inputs.token}}
+    - run: |
+           apiversion=`yq '.info.version' < ${{ inputs.openapi_file }}`
+           destinationFolder=services/$SERVICE_NAME/$apiversion
+           echo "ApiVersion=$apiversion" >> "$GITHUB_ENV"
+           echo "DestinationFolder=$destinationFolder" >> "$GITHUB_ENV"
+    - run: |
+           echo "API version: ${{ env.ApiVersion }}"
+           echo "Dest folder: ${{ env.DestinationFolder }}"
+    - name: Push openapi to services swagger doc repo
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.MJ_GITHUB_TOKEN }}
+      with:
+        source_file: ${{ inputs.openapi_file }}
+        destination_repo: 'mindjolt/service-swagger-docs'
+        destination_folder: ${{ env.DestinationFolder }}
+        user_email: '<>'
+        user_name: 'GitHub Actions Bot'
+
