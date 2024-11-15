@@ -23,13 +23,15 @@ runs:
            destinationFolder=services/${{ inputs.service_repo }}/$apiversion
            echo "ApiVersion=$apiversion" >> "$GITHUB_ENV"
            echo "DestinationFolder=$destinationFolder" >> "$GITHUB_ENV"
+      shell: bash
     - run: |
            echo "API version: ${{ env.ApiVersion }}"
            echo "Dest folder: ${{ env.DestinationFolder }}"
+      shell: bash
     - name: Push openapi to services swagger doc repo
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
-        API_TOKEN_GITHUB: ${{ secrets.MJ_GITHUB_TOKEN }}
+        API_TOKEN_GITHUB: ${{ inputs.token }}
       with:
         source_file: ${{ inputs.openapi_file }}
         destination_repo: 'mindjolt/service-swagger-docs'
