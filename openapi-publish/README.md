@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish OpenAPI
-        uses: mindjolt/actions/openapi-publish@main
+        uses: mindjolt/actions/openapi-publish@develop
         with:
           openapi_file: "src/resources/openapi.yml"
           token: "${{ secrets.MJ_GITHUB_TOKEN }}"
