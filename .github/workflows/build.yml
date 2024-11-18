@@ -28,7 +28,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USER_SYSTEMACCOUNTJC }}
+          username: ${{ vars.DOCKERHUB_SYSTEMACCOUNTJC }}
           password: ${{ secrets.DOCKERHUB_PWD_SYSTEMACCOUNTJC }}
 
       - name: snapshot-bump docker meta
