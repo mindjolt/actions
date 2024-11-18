@@ -30,6 +30,7 @@ jobs:
         with:
           username: ${{ vars.DOCKERHUB_SYSTEMACCOUNTJC }}
           password: ${{ secrets.DOCKERHUB_PWD_SYSTEMACCOUNTJC }}
+          logout: false
 
       - name: snapshot-bump docker meta
         id: snapshot-bump-meta
