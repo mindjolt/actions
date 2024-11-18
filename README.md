@@ -15,6 +15,7 @@ This repo contains a collection of Jam City github actions for use in
 * [package-json-env](package-json-env/README.md) - Converts a `package.json` to github actions environment variables.
 * [k6-perf-test](k6-perf-test/README.md) - Action for running a performance test using k6.
 * [snapshot-bump](snapshot-bump/README.md) - Action for bumping snapshot versions.
+* [openapi-publis](openapi-publish/README.md) - Action for publishing OpenAPI YAML to our API doc site.
 
 
 ## Releases
