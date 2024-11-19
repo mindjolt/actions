@@ -53,7 +53,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            confluence-action
+            ghcr.io/${{ github.repository_owner }}/actions/confluence-action
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push confluence
@@ -69,7 +69,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            nuget-publish-action
+            ghcr.io/${{ github.repository_owner }}/actions/nuget-publish-action
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push nuget
@@ -85,7 +85,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            config-service-action
+            ghcr.io/${{ github.repository_owner }}/actions/config-service-action
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push config
@@ -101,7 +101,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            csharp-build-env
+            ghcr.io/${{ github.repository_owner }}/actions/csharp-build-env
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push sbt-unity
@@ -117,7 +117,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            sbt-unity-action
+            ghcr.io/${{ github.repository_owner }}/actions/sbt-unity-action
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push sbt-unity
