@@ -37,7 +37,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            snapshot-bump-action
+            ghcr.io/${{ github.repository_owner }}/actions/snapshot-bump-action
           tags: |
             type=raw,value=${{ inputs.tag }}
       - name: Build and push snapshot-bump
