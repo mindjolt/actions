@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.13.0](https://github.com/mindjolt/actions/compare/v2.12.1...v2.13.0) (2024-11-20)
+
+
+### Features
+
+* Implement OpenAPI (Swagger) publish action ([d55e71d](https://github.com/mindjolt/actions/commit/d55e71d26ef13fc40e537788045445f6267ff115))
+
 ## [2.12.1](https://github.com/mindjolt/actions/compare/v2.12.0...v2.12.1) (2022-11-17)
 
 
