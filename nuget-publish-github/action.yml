@@ -1,0 +1,21 @@
+name: 'NuGet Publish'
+description: 'Publishes to GitHub NuGet registry. Requires nuget and Docker.'
+
+inputs:
+  user:
+    description: 'GitHub username or bot name (use ${GITHUB_ACTOR} in GitHub Actions)'
+    required: false
+  password:
+    description: 'GitHub personal access token (use ${GITHUB_TOKEN} in GitHub Actions)'
+    required: false
+  rootUrl:
+    description: 'GitHub NuGet root URL (e.g., https://nuget.pkg.github.com/${GITHUB_ACTOR}/index.json)'
+    required: true
+  packagePath:
+    description: 'Path to the .nupkg package'
+    required: true
+
+runs:
+  using: 'docker'
+  image: docker://sgn0/nuget-publish-github-action:v2
+  entrypoint: '/publish.sh'
