@@ -7,15 +7,12 @@ inputs:
     required: false
   password:
     description: 'GitHub personal access token (use ${GITHUB_TOKEN} in GitHub Actions)'
-    required: false
-  rootUrl:
-    description: 'GitHub NuGet root URL (e.g., https://nuget.pkg.github.com/${GITHUB_ACTOR}/index.json)'
-    required: true
+    required: false  
   packagePath:
     description: 'Path to the .nupkg package'
     required: true
 
 runs:
   using: 'docker'
-  image: docker://sgn0/nuget-publish-github-action:v2
+  image: docker://sgn0/nuget-publish-github-action:v1
   entrypoint: '/publish.sh'

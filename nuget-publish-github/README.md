@@ -4,7 +4,7 @@ Publishes nuget packages to github. Requires docker.
 Parameters:
 
 * `rootUrl` - The GitHub Packages NuGet URL (e.g., https://nuget.pkg.github.com/<owner>/index.json).
-* `user` - The GitHub username or bot name (use ${{ github.actor }} in GitHub Actions).
+* `user` - The GitHub username.
 * `password` - The personal access token (use ${{ secrets.GITHUB_TOKEN }} in GitHub Actions).
 * `packagePath` - The path to the nupkg to publish.
 
