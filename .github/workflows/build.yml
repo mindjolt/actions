@@ -73,6 +73,15 @@ jobs:
           tags: |
             type=raw,value=${{ inputs.tag }}
 
+      - name: nuget github docker meta
+        id: nuget-github-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/actions/nuget-publish-github-action
+          tags: |
+            type=raw,value=${{ inputs.tag }}
+
 #      - name: Build and push nuget
 #        uses: docker/build-push-action@v3
 #        with:
