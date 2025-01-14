@@ -1,4 +1,4 @@
-name: 'NuGet Publish'
+name: 'NuGet Publish GitHub'
 description: 'Publishes to GitHub NuGet registry. Requires dotnet, nuget and Docker.'
 
 inputs:
