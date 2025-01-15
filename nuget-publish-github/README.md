@@ -11,7 +11,7 @@ Parameters:
 
 ```yaml
 - name: Publish NuGet Package to Gihub
-  uses: mindjolt/actions/nuget-publish-github@v1
+  uses: mindjolt/actions/nuget-publish-github@v2
   with:
     rootUrl: "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
     user: ${{ github.actor }}
