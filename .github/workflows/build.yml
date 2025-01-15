@@ -72,6 +72,22 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/actions/nuget-publish-action
           tags: |
             type=raw,value=${{ inputs.tag }}
+            
+      - name: nuget-publish-github docker meta
+        id: nuget-publish-github-meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/actions/nuget-publish-github-action
+          tags: |
+            type=raw,value=${{ inputs.tag }}
+      - name: Build and push nuget-publish-github
+        uses: docker/build-push-action@v3
+        with:
+          context: ./nuget-publish-github
+          push: true
+          tags: "${{ steps.nuget-publish-github-meta.outputs.tags }}"
+          labels: "${{ steps.nuget-publish-github-meta.outputs.labels }}"
 
 #      - name: Build and push nuget
 #        uses: docker/build-push-action@v3
