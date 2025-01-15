@@ -4,7 +4,7 @@
 [[ -n "$INPUT_PASSWORD" ]] && password="$INPUT_PASSWORD" || password="$SECRETS_GITHUB_TOKEN"
 
 # Set the API key for GitHub NuGet registry
-dotnet nuget add source --username "$user" --password "$password" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${user}/index.json"
+dotnet nuget add source --username "$user" --password "$password" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/mindjolt/index.json"
 
 # Set Path
 path="$INPUT_PACKAGEPATH"
