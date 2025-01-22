@@ -14,7 +14,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/mindjolt/actions/nuget-publish-github-action:@v2'  
+  image: 'docker://ghcr.io/mindjolt/actions/nuget-publish-github-action:develop'  
   entrypoint: '/publish.sh'
   
 
