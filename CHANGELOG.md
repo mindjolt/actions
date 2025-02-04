@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.14.0](https://github.com/mindjolt/actions/compare/v2.13.0...v2.14.0) (2025-02-04)
+
+
+### Features
+
+* **GS-20988:** NuGet - do not publish snapshots ([99c7117](https://github.com/mindjolt/actions/commit/99c7117a2c8b3047ef630719d4ae93d03974e90b))
+
 ## [2.13.0](https://github.com/mindjolt/actions/compare/v2.12.1...v2.13.0) (2024-11-20)
 
 
