@@ -8,6 +8,8 @@ This repo contains a collection of Jam City github actions for use in
 * [confluence-mac](confluence-mac/README.md) - Same as above but intended to run on a Mac without docker.
 * [config](config/README.md) - Simple action for updating config service roots.
 * [package-manager-publish](package-manager-publish/README.md) - Publishes Jam City Package Manager packages to JC artifactory.
+* [package-manager-prepublish-github](package-manager-prepublish-github/README.md) - Prepares Jam City Package Manager packages to be published on JC Github.
+* [package-manager-publish-github](package-manager-publish-github/README.md) - Publishes Jam City Package Manager packages to JC Github.
 * [nuget-publish](nuget-publish/README.md) - Publishes nuget packages to JC artifactory.
 * [nuget-publish-mac](nuget-publish-mac/README.md) - Same as above but intended to run on a Mac without docker.
 * [nuget-publish-github](nuget-publish-github/README.md) - Publishes nuget packages to Github.
