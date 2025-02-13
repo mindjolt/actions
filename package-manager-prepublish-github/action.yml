@@ -1,0 +1,146 @@
+# action.yml
+name: 'Package Manager GitHub Pre-Publish'
+description: 'Prepare Package Manager packages to be published on GitHub'
+
+inputs:
+  sdkRepo:
+    description: 'Source SDK repository reference to download artifacts from'
+    required: true
+  token:
+    description: 'GitHub access token'
+    required: true
+  packageZip:
+    description: 'Path to zip file containing package to publish'
+    required: true
+  packageJson:
+    description: 'Path to package.json to publish'
+    required: true
+  packageName:
+    description: 'Name of the package (JamCity.CommonSdk, JamCity.ConfigSdk, etc)'
+    required: false
+    default: ''
+  packageVersion:
+    description: 'The version of package'
+    required: false
+    default: ''
+  branchRef:
+    description: 'If specified, pre-publish will fail to publish if the release version is not appropriate for the branchRef. That is, a pre-release version cannot be published to the main/master branch and a release version can''t be published to the develop branch.'
+    required: false
+    default: ''
+  extras:
+    description: 'Additional files to publish, comma separated'
+    required: false
+    default: ''
+  releaseRepo:
+    description: 'The name of the repository for released packages'
+    required: false
+    default: 'jcpm-release-local'
+  prereleaseRepo:
+    description: 'The name of the repository for pre-released packages'
+    required: false
+    default: 'jcpm-snapshot-local'
+  isTest:
+    description: 'If true, the package will be published to the release or pre-release repository''s develop branch'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Extract package metadata from package.json
+      run: |
+        eval "$(jq -r 'to_entries[] | select(.key == "name" or .key == "version") | 
+            "PACKAGE_\(.key | ascii_upcase)=\(.value)"' ${{ inputs.packageJson }} | sed "s/=/='/;s/$/'/")"
+        echo "PACKAGE_NAME=${{ inputs.packageName || env.PACKAGE_NAME }}" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=${{ inputs.packageVersion || env.PACKAGE_VERSION }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set JCPM repository reference
+      run: |
+        [[ "${{ env.PACKAGE_VERSION }}" == *"-"* ]] && IS_PRERELEASE=true || IS_PRERELEASE=false
+        echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
+        
+        if [[ "$IS_PRERELEASE" == "true" ]]; then
+          echo "JCPM_REPO=${{ inputs.prereleaseRepo }}" >> $GITHUB_ENV
+        else
+          echo "JCPM_REPO=${{ inputs.releaseRepo }}" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Set JCPM repository branch reference
+      run: |
+        if [[ "${{ inputs.isTest }}" == "true" ]]; then
+          echo "JCPM_BRANCH_REF=refs/heads/develop" >> $GITHUB_ENV
+        else
+          echo "JCPM_BRANCH_REF=refs/heads/main" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Validate versioning rules
+      if: inputs.branchRef != ''
+      run: |
+        [[ "${{ env.JCPM_REPO }}" == *"release"* ]] && [[ "$IS_PRERELEASE" == "true" ]] && 
+          echo "Can't publish pre-release version ${{ env.PACKAGE_VERSION }} to release repo ${{ env.JCPM_REPO }}" && exit 1
+        
+        [[ "${{ env.JCPM_REPO }}" != *"release"* ]] && [[ "$IS_PRERELEASE" == "false" ]] && 
+          echo "Can't publish release version ${{ env.PACKAGE_VERSION }} to pre-release repo ${{ env.JCPM_REPO }}" && exit 1
+        
+        { [[ "${{ inputs.branchRef }}" == *"/main" ]] || [[ "${{ inputs.branchRef }}" == "main" ]] || [[ "${{ inputs.branchRef }}" == *"/master" ]] || [[ "${{ inputs.branchRef }}" == "master" ]]; } &&
+          [[ "$IS_PRERELEASE" == "true" ]] && 
+            echo "Can't publish pre-release version ${{ env.PACKAGE_VERSION }} to release repo ${{ env.JCPM_REPO }}" && exit 1
+        
+        { [[ "${{ inputs.branchRef }}" == *"/develop" ]] || [[ "${{ inputs.branchRef }}" == "develop" ]]; } && 
+          [[ "$IS_PRERELEASE" == "false" ]] && 
+            echo "Can't publish release version ${{ env.PACKAGE_VERSION }} to pre-release repo ${{ env.JCPM_REPO }}" && exit 1
+        
+        echo "Version ${{ env.PACKAGE_VERSION }} is valid for publishing to ${{ env.JCPM_REPO }} repo"
+      shell: bash
+
+    - name: Create output directory
+      run: |
+        PACKAGE_OUTPUT_DIR=output/${{ env.PACKAGE_NAME }}/${{ env.PACKAGE_VERSION }}
+        mkdir -p $PACKAGE_OUTPUT_DIR
+        echo "PACKAGE_OUTPUT_DIR=$PACKAGE_OUTPUT_DIR" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Copy main artifact files to output directory
+      run: |
+        echo "Copying ${{ inputs.packageZip }}, and ${{ inputs.packageJson }} files to ${{ env.PACKAGE_OUTPUT_DIR }}"
+        cp ${{ inputs.packageZip }} ${{ inputs.packageJson }} ${{ env.PACKAGE_OUTPUT_DIR }}
+      shell: bash
+
+    - name: Handle extra files
+      if: inputs.extras != ''
+      run: |
+        IFS=',' read -ra FILES <<< "${{ inputs.extras }}"
+        for file in "${FILES[@]}"; do
+          if [[ -f "$file" ]]; then
+            cp "$file" ${{ env.PACKAGE_OUTPUT_DIR }}
+          else
+            echo "Warning: File '$file' not found, skipping."
+          fi
+        done
+      shell: bash
+
+    - name: Store package files
+      uses: actions/upload-artifact@v4
+      id: artifact-upload-step
+      with:
+        name: jcpm-${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}
+        path: ${{ env.PACKAGE_OUTPUT_DIR }}
+        overwrite: 'true'
+        retention-days: 1
+
+    - name: Get artifact ID
+      run: |
+        echo "ARTIFACT_ID=${{ steps.artifact-upload-step.outputs.artifact-id }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Trigger JCPM artifact repository workflow
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        repo: 'mindjolt/${{ env.JCPM_REPO }}'
+        ref: ${{ env.JCPM_BRANCH_REF }}
+        workflow: 'upload-package.yml'
+        token: ${{ inputs.token }}
+        inputs: '{ "sdkRepo": "${{ inputs.sdkRepo }}", "packageName": "${{ env.PACKAGE_NAME }}", "packageVersion": "${{ env.PACKAGE_VERSION }}", "branchRef": "${{ env.JCPM_BRANCH_REF }}", "artifactId": "${{ env.ARTIFACT_ID }}" }'

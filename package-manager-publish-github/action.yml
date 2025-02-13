@@ -1,0 +1,110 @@
+# action.yml
+name: 'Package Manager GitHub Publish'
+description: 'Publishes Package Manager packages to GitHub'
+
+inputs:
+  sdkRepo:
+    description: 'Source SDK repository reference to download artifacts from'
+    required: true
+  token:
+    description: 'GitHub access token'
+    required: true
+  packageName:
+    description: 'Package Name'
+    required: true
+  packageVersion:
+    description: 'Package Version'
+    required: true
+  branchRef:
+    description: 'Branch reference'
+    required: false
+    default: 'refs/heads/main'
+  artifactId:
+    description: 'Artifact ID to be downloaded'
+    required: false
+    default: 'test'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set GitHub config
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@jamcity.com"
+      shell: bash
+
+    - name: List inputs
+      run: |
+        echo "packageName: ${{ inputs.packageName }}"
+        echo "packageVersion: ${{ inputs.packageVersion }}"
+        echo "artifactId: ${{ inputs.artifactId }}"
+      shell: bash
+
+    - name: Download packages files from SDK repository
+      if: inputs.artifactId != 'test'
+      run: |
+        echo "Downloading package files from ${{ inputs.sdkRepo }} for ${{ inputs.artifactId }}"
+        ARTIFACTS_DIR="/tmp/artifacts-${{ inputs.artifactId }}"
+        mkdir -p $ARTIFACTS_DIR
+        curl -L \
+             -H "Authorization: Bearer ${{ inputs.token }}" \
+             -H "Accept: application/vnd.github.V3+json" \
+             "https://api.github.com/repos/mindjolt/${{ inputs.sdkRepo }}/actions/artifacts/${{ inputs.artifactId }}/zip" \
+             -o "$ARTIFACTS_DIR/${{ inputs.artifactId }}.zip"
+      shell: bash
+
+    - name: Determine if version is a snapshot
+      run: |
+        if [[ "${{ inputs.packageVersion }}" == *"-"* ]]; then
+          echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+        else
+          echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+        fi
+      shell: bash
+
+    - name: Remove existing snapshot version (if applicable)
+      if: env.IS_PRERELEASE == 'true'
+      run: |
+        echo "Checking if snapshot version already exists: packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}"
+        git fetch origin ${{ inputs.branchRef }} --depth=1 
+        if git ls-tree -d --name-only ${{ inputs.branchRef }} -- "packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}" | grep -q .; then
+          echo "Deleting existing snapshot version: ${{ inputs.packageVersion }} for ${{ inputs.packageName }}"
+          git rm -r "packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}/"
+          git commit -m "Removing old snapshot version ${{ inputs.packageVersion }} for ${{ inputs.packageName }}"
+          git push origin ${{ inputs.branchRef }}
+        else
+          echo "No existing snapshot version found, proceeding..."
+        fi
+      shell: bash
+
+    - name: Check if official version already exists (if applicable)
+      if: env.IS_PRERELEASE == 'false'
+      run: |
+        echo "Checking if official version already exists: packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}"
+        git fetch origin ${{ inputs.branchRef }} --depth=1 
+        if git ls-tree -d --name-only ${{ inputs.branchRef }} -- "packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}" | grep -q .; then
+          echo "Version ${{ inputs.packageVersion }} for ${{ inputs.packageName }} already exists. Aborting."
+          exit 1
+        else
+          echo "Version ${{ inputs.packageVersion }} for ${{ inputs.packageName }} does not exist. Proceeding."
+        fi
+      shell: bash
+
+    - name: Copy artifacts to package directory
+      run: |
+        ARTIFACTS_DIR="/tmp/artifacts-${{ inputs.artifactId }}"
+        PACKAGE_FILES_DIR="packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}"
+        mkdir -p $PACKAGE_FILES_DIR
+        unzip -o $ARTIFACTS_DIR/${{ inputs.artifactId }}.zip -d $PACKAGE_FILES_DIR
+        if [ -f "$PACKAGE_FILES_DIR/package.zip" ]; then
+          mv "$PACKAGE_FILES_DIR/package.zip" "$PACKAGE_FILES_DIR/${{ inputs.packageName }}.zip"
+        fi
+        rm -rf $ARTIFACTS_DIR
+      shell: bash
+
+    - name: Commit and push changes
+      run: |
+        git add -A
+        git commit -m "Publishing ${{ inputs.packageName }} version ${{ inputs.packageVersion }}"
+        git push origin ${{ inputs.branchRef }}
+      shell: bash
