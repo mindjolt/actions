@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.0](https://github.com/mindjolt/actions/compare/v2.14.0...v2.15.0) (2025-02-17)
+
+
+### Features
+
+* adds package-manager-prepublish-github and package-manager-publish-github actions to be used on the new jcpm artifact repo ([b34e559](https://github.com/mindjolt/actions/commit/b34e559671dd193915ec90b83c966c4900c6c86f))
+
 ## [2.14.0](https://github.com/mindjolt/actions/compare/v2.13.0...v2.14.0) (2025-02-04)
 
 
