@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.2](https://github.com/mindjolt/actions/compare/v2.15.1...v2.15.2) (2025-02-18)
+
+
+### Bug Fixes
+
+* removes sdkRepo input parameter from package-manager-prepublish-github action ([657c6e8](https://github.com/mindjolt/actions/commit/657c6e8049836671673b2278be2cf18c9dd3e1ff))
+
 ## [2.15.1](https://github.com/mindjolt/actions/compare/v2.15.0...v2.15.1) (2025-02-18)
 
 
