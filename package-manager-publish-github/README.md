@@ -20,7 +20,7 @@ parameters:
 - name: Publish
   uses: mindjolt/actions/package-manager-publish-github@v2
   with:
-    sdkRepo: 'unity-something-sdk'
+    sdkRepo: 'owner/unity-something-sdk'
     token: ${{ secrets.JCPM_PAT }}
     packageName: 'JamCity.Something'
     packageVersion: '1.0.0'
@@ -32,7 +32,7 @@ parameters:
 - name: Publish
   uses: mindjolt/actions/package-manager-publish-github@v2
   with:
-    sdkRepo: 'unity-something-sdk'
+    sdkRepo: 'owner/unity-something-sdk'
     token: ${{ secrets.JCPM_PAT }}
     packageName: 'JamCity.Something'
     packageVersion: '1.0.0-SNAPSHOT'
@@ -62,7 +62,7 @@ requires a previous step to simulate the package's files creation
 - name: Run upload package files
   uses: mindjolt/actions/package-manager-publish-github@v2
   with:
-    sdkRepo: 'test-sdk'
+    sdkRepo: 'test/test-sdk'
     token: 'TEST_TOKEN'
     packageName: 'Test.Package'
     packageVersion: ${{ env.PACKAGE_VERSION }}
