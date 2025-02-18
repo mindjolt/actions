@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.15.1](https://github.com/mindjolt/actions/compare/v2.15.0...v2.15.1) (2025-02-18)
+
+
+### Miscellaneous Chores
+
+* release 2.15.1 ([b571473](https://github.com/mindjolt/actions/commit/b571473c5ee7aeff8655bfcb9ed93cb242d9d48d))
+
 ## [2.15.0](https://github.com/mindjolt/actions/compare/v2.14.0...v2.15.0) (2025-02-17)
 
 
