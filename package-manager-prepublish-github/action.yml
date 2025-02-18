@@ -3,9 +3,6 @@ name: 'Package Manager GitHub Pre-Publish'
 description: 'Prepare Package Manager packages to be published on GitHub'
 
 inputs:
-  sdkRepo:
-    description: 'Source SDK repository reference to download artifacts from'
-    required: true
   token:
     description: 'GitHub access token'
     required: true
@@ -143,4 +140,4 @@ runs:
         ref: ${{ env.JCPM_BRANCH_REF }}
         workflow: 'upload-package.yml'
         token: ${{ inputs.token }}
-        inputs: '{ "sdkRepo": "${{ inputs.sdkRepo }}", "packageName": "${{ env.PACKAGE_NAME }}", "packageVersion": "${{ env.PACKAGE_VERSION }}", "branchRef": "${{ env.JCPM_BRANCH_REF }}", "artifactId": "${{ env.ARTIFACT_ID }}" }'
+        inputs: '{ "sdkRepo": "${{ github.repository }}", "packageName": "${{ env.PACKAGE_NAME }}", "packageVersion": "${{ env.PACKAGE_VERSION }}", "branchRef": "${{ env.JCPM_BRANCH_REF }}", "artifactId": "${{ env.ARTIFACT_ID }}" }'
