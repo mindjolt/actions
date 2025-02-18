@@ -5,7 +5,6 @@ workflow on the GitHub artifactory repository.
 
 ---
 Parameters:
-* `sdkRepo` - The source SDK GitHub repository reference to download artifacts from.
 * `token` - The repo's access token.
 * `packageZip` - Local path the zip file of the package to publish.
 * `packageJson` - Local path to the package.json.
@@ -34,7 +33,6 @@ Publishing the package will fail if either of the above is violated. To avoid th
 - name: Pre-Publish
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -50,7 +48,6 @@ it will be published to the release (`jcpm-release-local`) repository.
   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -64,7 +61,6 @@ The package version must be a release version (e.g. 1.0.0) for the package to be
   if: github.ref == 'refs/heads/develop'
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -82,7 +78,6 @@ To use custom repositories, specify the `releaseRepo` and `prereleaseRepo` param
 - name: Pre-Publish
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -97,7 +92,6 @@ To use custom repositories, specify the `releaseRepo` and `prereleaseRepo` param
   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -112,7 +106,6 @@ The package version must be a release version (e.g. 1.0.0) for the package to be
   if: github.ref == 'refs/heads/develop'
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -132,7 +125,6 @@ this should be used for testing purposes only, so the SDK repository's branch mu
 - name: Pre-Publish
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -149,7 +141,6 @@ to publish to the pre-release repository's develop branch, set `branchRef` to `r
 - name: Pre-Publish
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
@@ -163,7 +154,6 @@ Make sure the package version is a release version (e.g. 1.0.0).
 - name: Pre-Publish
   uses: mindjolt/actions/package-manager-prepublish-github@v2
   with:
-    sdkRepo: ${{ github.repository }}
     token: ${{ secrets.JCPM_PAT }}
     packageZip: 'target/package.zip'
     packageJson: 'target/package.json'
