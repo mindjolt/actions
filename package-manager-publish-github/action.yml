@@ -49,7 +49,7 @@ runs:
         curl -L \
              -H "Authorization: Bearer ${{ inputs.token }}" \
              -H "Accept: application/vnd.github.V3+json" \
-             "https://api.github.com/repos/mindjolt/${{ inputs.sdkRepo }}/actions/artifacts/${{ inputs.artifactId }}/zip" \
+             "https://api.github.com/repos/${{ inputs.sdkRepo }}/actions/artifacts/${{ inputs.artifactId }}/zip" \
              -o "$ARTIFACTS_DIR/${{ inputs.artifactId }}.zip"
       shell: bash
 
