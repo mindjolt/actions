@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.0](https://github.com/mindjolt/actions/compare/v2.15.2...v2.16.0) (2025-02-19)
+
+
+### Features
+
+* add jcpm-index-builder ([0f02647](https://github.com/mindjolt/actions/commit/0f02647cf3cd29e5c8ab197be91a1d043ba4c315))
+
 ## [2.15.2](https://github.com/mindjolt/actions/compare/v2.15.1...v2.15.2) (2025-02-18)
 
 
