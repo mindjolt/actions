@@ -1,0 +1,29 @@
+# action.yml
+name: 'JCPM Index Builder'
+description: 'Regenerates the index.json file for the JCPM package manager'
+
+inputs:
+  branchRef:
+    description: 'Branch reference'
+    required: false
+    default: 'refs/heads/main'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set GitHub config
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@jamcity.com"
+      shell: bash
+
+    - name: Generate index
+      run: python $GITHUB_ACTION_PATH/generate_index.py
+      shell: bash
+
+    - name: Commit and push changes
+      run: |
+        git add packages/index.json
+        git commit -m "Updating index.json"
+        git push origin ${{ inputs.branchRef }}
+      shell: bash
