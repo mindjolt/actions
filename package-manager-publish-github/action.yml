@@ -70,7 +70,7 @@ runs:
         if git ls-tree -d --name-only ${{ inputs.branchRef }} -- "packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}" | grep -q .; then
           echo "Deleting existing snapshot version: ${{ inputs.packageVersion }} for ${{ inputs.packageName }}"
           git rm -r "packages/${{ inputs.packageName }}/${{ inputs.packageVersion }}/"
-          git commit -m "Removing old snapshot version ${{ inputs.packageVersion }} for ${{ inputs.packageName }}"
+          git commit -m "chore: removes old snapshot version ${{ inputs.packageVersion }} for ${{ inputs.packageName }}"
           git push origin ${{ inputs.branchRef }}
         else
           echo "No existing snapshot version found, proceeding..."
@@ -105,6 +105,6 @@ runs:
     - name: Commit and push changes
       run: |
         git add -A
-        git commit -m "Publishing ${{ inputs.packageName }} version ${{ inputs.packageVersion }}"
+        git commit -m "chore: publishes ${{ inputs.packageName }} version ${{ inputs.packageVersion }}"
         git push origin ${{ inputs.branchRef }}
       shell: bash
