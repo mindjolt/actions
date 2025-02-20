@@ -24,6 +24,6 @@ runs:
     - name: Commit and push changes
       run: |
         git add packages/index.json
-        git commit -m "Updating index.json"
+        git commit -m "chore: updates index.json"
         git push origin ${{ inputs.branchRef }}
       shell: bash
