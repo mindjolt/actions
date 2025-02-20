@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.1](https://github.com/mindjolt/actions/compare/v2.16.0...v2.16.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* resolves issue when extracting info from package.json file, updates commit messages format ([3c02ad6](https://github.com/mindjolt/actions/commit/3c02ad66f0c2a55dd5de0d9eefd93bf0c212f83d))
+
 ## [2.16.0](https://github.com/mindjolt/actions/compare/v2.15.2...v2.16.0) (2025-02-19)
 
 
