@@ -1,0 +1,38 @@
+# action.yml
+name: 'Nuget Publish GitHub Mac'
+description: 'Publishes to local nuget repository on artifactory. Requires nuget already installed.'
+inputs:
+  user:
+    description: 'GitHub username or bot name (use ${GITHUB_ACTOR} in GitHub Actions)'
+    required: false
+  password:
+    description: 'GitHub personal access token (use ${GITHUB_TOKEN} in GitHub Actions)'
+    required: false
+  packagePath:
+    description: 'Path to the .nupkg package'
+    required: true
+  
+runs:
+  using: 'composite'
+  steps:
+    - name: Publish to GitHub NuGet registry
+      run: |
+        # Check if user and password are provided, otherwise use secrets
+        [[ -n "${{ inputs.user }}" ]] && user="${{ inputs.user }}" || user="$SECRETS_GITHUB_USER"
+        [[ -n "${{ inputs.password }}" ]] && password="${{ inputs.password }}" || password="$SECRETS_GITHUB_TOKEN"
+        
+        # Set the API key for GitHub NuGet registry 
+        nuget setapikey "${user}:${password}" -Source "https://nuget.pkg.github.com/mindjolt/index.json"
+        
+        # Set Path 
+        path="${{ inputs.packagePath }}"
+        [[ ! -e "$path" ]] && [[ "${path}" == *"+"* ]] && path="${path%+*}.nupkg"
+        
+        # Check if the package path contains "SNAPSHOT"
+        if [[ "${path}" == *"SNAPSHOT"* ]]; then
+          echo "Snapshot version detected, skipping publish."
+        else
+          # Push the package to GitHub NuGet registry with API key
+          nuget push "${path}" -src "https://nuget.pkg.github.com/mindjolt/index.json"
+        fi
+      shell: bash  
