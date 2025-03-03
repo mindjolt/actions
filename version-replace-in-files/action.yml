@@ -1,0 +1,15 @@
+name: 'Replace Version In Files'
+description: 'Replace Version String in files'
+inputs:
+  from-version:
+    description: 'previous version to replace'
+    required: true
+  to-version:
+    description: 'new version to replace'
+    required: true
+  files:
+    description: 'list of files to replace version in (multiline input with each file on a new line)'
+    required: true
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

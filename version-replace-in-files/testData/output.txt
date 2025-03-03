@@ -1,0 +1,11 @@
+# start x-gs-replace-version
+version = 0.1.2
+# end x-gs-replace-version
+// start x-gs-replace-version
+version = 0.1.2
+// end x-gs-replace-version
+
+version = 0.1.2 # x-gs-replace-version
+version = 0.1.2 // x-gs-replace-version
+
+version = 0.1.1
