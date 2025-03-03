@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.0](https://github.com/mindjolt/actions/compare/v2.16.1...v2.17.0) (2025-03-03)
+
+
+### Features
+
+* **SCRUM0-4915:** implement file version replace ([abc82e4](https://github.com/mindjolt/actions/commit/abc82e447a0fd306022a19fb62c7dd9690d32316))
+
 ## [2.16.1](https://github.com/mindjolt/actions/compare/v2.16.0...v2.16.1) (2025-02-20)
 
 
