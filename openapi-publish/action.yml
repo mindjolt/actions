@@ -34,6 +34,23 @@ runs:
         repository: mindjolt/service-swagger-docs
         token: ${{inputs.token}}
         path: service-swagger-docs
+    - name: Get previous version
+      run: |
+        serviceFolder="service-swagger-docs/services/${{ inputs.service_repo }}"
+        if [ -d "$serviceFolder" ]; then
+          cd "$serviceFolder"
+          versions=$(ls -d */ | sed 's/\///' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' -o)
+          if [[ -n "$versions" ]]; then
+            previousVersion=$(echo "$versions" | sort -Vr | head -n 1)
+            echo "PreviousVersion=$previousVersion" >> "$GITHUB_ENV"
+          else
+            echo "PreviousVersion=" >> "$GITHUB_ENV"
+          fi
+        else
+          echo "Folder $serviceFolder does not exist yet"
+          echo "PreviousVersion=" >> "$GITHUB_ENV"
+        fi
+      shell: bash
     - name: Push openapi to services swagger doc repo
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
