@@ -73,6 +73,25 @@ runs:
           echo "OpenapiUpdated=true" >> "$GITHUB_OUTPUT"
         fi
       shell: bash
+    - name: Remove previous version and push changes if openapi is not updated
+      if: env.PreviousVersion && steps.compare_openapi.outputs.OpenapiUpdated == 'false'
+      run: |
+        cd service-swagger-docs
+
+        previousVersion="${{ env.PreviousVersion }}"
+        serviceRepo="${{ inputs.service_repo }}"
+        folderToRemove="services/$serviceRepo/$previousVersion"
+
+        echo "Removing folder: $folderToRemove"
+        rm -rf "$folderToRemove"
+
+        git config --local user.email "<>"
+        git config --local user.name "GitHub Actions Bot"
+
+        git add .
+        git commit -m "Remove version $previousVersion for $serviceRepo"
+        git push origin ${{ github.head_ref || github.ref_name }}
+      shell: bash
     - name: Push openapi to services swagger doc repo
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
