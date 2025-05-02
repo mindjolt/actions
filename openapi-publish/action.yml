@@ -28,6 +28,12 @@ runs:
            echo "API version: ${{ env.ApiVersion }}"
            echo "Dest folder: ${{ env.DestinationFolder }}"
       shell: bash
+    - name: Clone service-swagger-docs repo
+      uses: actions/checkout@v3.3.0
+      with:
+        repository: mindjolt/service-swagger-docs
+        token: ${{inputs.token}}
+        path: service-swagger-docs
     - name: Push openapi to services swagger doc repo
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
