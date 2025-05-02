@@ -51,6 +51,28 @@ runs:
           echo "PreviousVersion=" >> "$GITHUB_ENV"
         fi
       shell: bash
+    - name: Fetch and compare previous openapi
+      id: compare_openapi
+      if: env.PreviousVersion
+      run: |
+        previousVersion="${{ env.PreviousVersion }}"
+        openapiFilename=$(basename "${{ inputs.openapi_file }}")
+        previousOpenapiPath="service-swagger-docs/services/${{ inputs.service_repo }}/$previousVersion/$openapiFilename"
+
+        if [ -f "$previousOpenapiPath" ]; then
+          previous_content=$(cat "$previousOpenapiPath" | yq 'del(.info)')
+          current_content=$(cat "${{ inputs.openapi_file }}" | yq 'del(.info)')
+
+          if [[ "$current_content" == "$previous_content" ]]; then
+            echo "OpenapiUpdated=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "OpenapiUpdated=true" >> "$GITHUB_OUTPUT"
+          fi
+        else
+          echo "Previous OpenAPI file not found: $previousOpenapiPath"
+          echo "OpenapiUpdated=true" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash
     - name: Push openapi to services swagger doc repo
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
