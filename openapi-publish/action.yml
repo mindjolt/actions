@@ -100,7 +100,7 @@ runs:
         git config --local user.name "GitHub Actions Bot"
 
         git add .
-        git commit -m "Remove version $previousVersion for $serviceRepo"
+        git commit -m "Update from https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
         git push origin ${{ github.head_ref || github.ref_name }}
       shell: bash
 
