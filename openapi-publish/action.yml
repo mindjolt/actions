@@ -90,8 +90,11 @@ runs:
         serviceRepo="${{ inputs.service_repo }}"
         folderToRemove="services/$serviceRepo/$previousVersion"
 
-        echo "Removing folder: $folderToRemove"
-        rm -rf "$folderToRemove"
+        # Remove the previous version folder if the condition is met
+        if [[ -n "$previousVersion" && "${{ steps.compare_openapi.outputs.OpenapiUpdated }}" == "false" ]]; then
+          echo "Removing folder: $folderToRemove"
+          rm -rf "$folderToRemove"
+        fi
 
         git config --local user.email "<>"
         git config --local user.name "GitHub Actions Bot"
