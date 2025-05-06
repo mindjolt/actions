@@ -20,7 +20,7 @@ runs:
         token: ${{inputs.token}}
     - run: |
            apiversion=`yq '.info.version' < ${{ inputs.openapi_file }}`
-           destinationFolder=services/${{ inputs.service_repo }}/$apiversion
+           destinationFolder=service-swagger-docs/services/${{ inputs.service_repo }}/$apiversion
            echo "ApiVersion=$apiversion" >> "$GITHUB_ENV"
            echo "DestinationFolder=$destinationFolder" >> "$GITHUB_ENV"
       shell: bash
@@ -75,6 +75,15 @@ runs:
       shell: bash
     - name: Push openapi to services swagger doc repo and remove previous version if not updated
       run: |
+        destinationFolder="${{ env.DestinationFolder }}"
+        openapiFile="${{ inputs.openapi_file }}"
+
+        # Create destination folder if it doesn't exist
+        mkdir -p "$destinationFolder"
+
+        # Copy openapi file to the destination folder
+        cp "$openapiFile" "$destinationFolder/"
+
         cd service-swagger-docs
 
         previousVersion="${{ env.PreviousVersion }}"
