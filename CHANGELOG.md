@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.18.0](https://github.com/mindjolt/actions/compare/v2.17.0...v2.18.0) (2025-05-12)
+
+
+### Features
+
+* modify openapi-publish to replace previous version ([0ca3c2e](https://github.com/mindjolt/actions/commit/0ca3c2e112fd80763b6a5d15a6546094c0de8a6b))
+
+
+### Bug Fixes
+
+* revert openapi-publish changes for replacing previous versions ([b9868c2](https://github.com/mindjolt/actions/commit/b9868c27632efb260b382d4f4187e9a0e34aab76))
+
 ## [2.17.0](https://github.com/mindjolt/actions/compare/v2.16.1...v2.17.0) (2025-03-03)
 
 
