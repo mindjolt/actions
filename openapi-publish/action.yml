@@ -20,7 +20,7 @@ runs:
         token: ${{inputs.token}}
     - run: |
            apiversion=`yq '.info.version' < ${{ inputs.openapi_file }}`
-           destinationFolder=service-swagger-docs/services/${{ inputs.service_repo }}/$apiversion
+           destinationFolder=services/${{ inputs.service_repo }}/$apiversion
            echo "ApiVersion=$apiversion" >> "$GITHUB_ENV"
            echo "DestinationFolder=$destinationFolder" >> "$GITHUB_ENV"
       shell: bash
@@ -28,79 +28,14 @@ runs:
            echo "API version: ${{ env.ApiVersion }}"
            echo "Dest folder: ${{ env.DestinationFolder }}"
       shell: bash
-    - name: Clone service-swagger-docs repo
-      uses: actions/checkout@v3.3.0
+    - name: Push openapi to services swagger doc repo
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ inputs.token }}
       with:
-        repository: mindjolt/service-swagger-docs
-        token: ${{inputs.token}}
-        path: service-swagger-docs
-    - name: Get previous version
-      run: |
-        serviceFolder="service-swagger-docs/services/${{ inputs.service_repo }}"
-        if [ -d "$serviceFolder" ]; then
-          cd "$serviceFolder"
-          versions=$(ls -d */ | sed 's/\///' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' -o)
-          if [[ -n "$versions" ]]; then
-            previousVersion=$(echo "$versions" | sort -Vr | head -n 1)
-            echo "PreviousVersion=$previousVersion" >> "$GITHUB_ENV"
-          else
-            echo "PreviousVersion=" >> "$GITHUB_ENV"
-          fi
-        else
-          echo "Folder $serviceFolder does not exist yet"
-          echo "PreviousVersion=" >> "$GITHUB_ENV"
-        fi
-      shell: bash
-    - name: Fetch and compare previous openapi
-      id: compare_openapi
-      if: env.PreviousVersion
-      run: |
-        previousVersion="${{ env.PreviousVersion }}"
-        openapiFilename=$(basename "${{ inputs.openapi_file }}")
-        previousOpenapiPath="service-swagger-docs/services/${{ inputs.service_repo }}/$previousVersion/$openapiFilename"
-
-        if [ -f "$previousOpenapiPath" ]; then
-          previous_content=$(cat "$previousOpenapiPath" | yq 'del(.info)')
-          current_content=$(cat "${{ inputs.openapi_file }}" | yq 'del(.info)')
-
-          if [[ "$current_content" == "$previous_content" ]]; then
-            echo "OpenapiUpdated=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "OpenapiUpdated=true" >> "$GITHUB_OUTPUT"
-          fi
-        else
-          echo "Previous OpenAPI file not found: $previousOpenapiPath"
-          echo "OpenapiUpdated=true" >> "$GITHUB_OUTPUT"
-        fi
-      shell: bash
-    - name: Push openapi to services swagger doc repo and remove previous version if not updated
-      run: |
-        destinationFolder="${{ env.DestinationFolder }}"
-        openapiFile="${{ inputs.openapi_file }}"
-
-        # Create destination folder if it doesn't exist
-        mkdir -p "$destinationFolder"
-
-        # Copy openapi file to the destination folder
-        cp "$openapiFile" "$destinationFolder/"
-
-        cd service-swagger-docs
-
-        previousVersion="${{ env.PreviousVersion }}"
-        serviceRepo="${{ inputs.service_repo }}"
-        folderToRemove="services/$serviceRepo/$previousVersion"
-
-        # Remove the previous version folder if the condition is met
-        if [[ -n "$previousVersion" && "${{ steps.compare_openapi.outputs.OpenapiUpdated }}" == "false" ]]; then
-          echo "Removing folder: $folderToRemove"
-          rm -rf "$folderToRemove"
-        fi
-
-        git config --local user.email "<>"
-        git config --local user.name "GitHub Actions Bot"
-
-        git add .
-        git commit -m "Update from https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
-        git push origin ${{ github.head_ref || github.ref_name }}
-      shell: bash
+        source_file: ${{ inputs.openapi_file }}
+        destination_repo: 'mindjolt/service-swagger-docs'
+        destination_folder: ${{ env.DestinationFolder }}
+        user_email: '<>'
+        user_name: 'GitHub Actions Bot'
 
