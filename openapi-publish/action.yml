@@ -2,8 +2,11 @@
 name: 'Publish OpenAPI'
 description: 'Publishes OpenAPI YAML to our API repo'
 inputs:
+  artifact_name: 
+    description: 'The name of the artifact containing the OpenAPI spec to download'
+    required: true
   openapi_file:
-    description: 'The name of the openapi file to publish'
+    description: 'The name of the openapi file to publish (within the downloaded artifact)'
     required: true
   service_repo:
     description: 'The name of the service repo. This is used as part of the path to the file in the documentation repo'
@@ -15,9 +18,14 @@ runs:
   using: 'composite'
   steps:
     - name: Cloning ${{github.ref}}
-      uses: actions/checkout@v3.3.0
+      uses: actions/checkout@v4
       with:
         token: ${{inputs.token}}
+    - name: Download OpenAPI Artifact
+      uses: actions/download-artifact@v4
+      with: 
+        name: ${{ inputs.artifact_name }}
+        path: .
     - run: |
            apiversion=`yq '.info.version' < ${{ inputs.openapi_file }}`
            destinationFolder=service-swagger-docs/services/${{ inputs.service_repo }}/$apiversion
@@ -29,7 +37,7 @@ runs:
            echo "Dest folder: ${{ env.DestinationFolder }}"
       shell: bash
     - name: Clone service-swagger-docs repo
-      uses: actions/checkout@v3.3.0
+      uses: actions/checkout@v4
       with:
         repository: mindjolt/service-swagger-docs
         token: ${{inputs.token}}
@@ -101,6 +109,6 @@ runs:
 
         git add .
         git commit -m "Update from https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
-        git push origin ${{ github.head_ref || github.ref_name }}
+        git push origin main
       shell: bash
 
