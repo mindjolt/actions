@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.18.1](https://github.com/mindjolt/actions/compare/v2.18.0...v2.18.1) (2025-05-14)
+
+
+### Bug Fixes
+
+* don't overwrite openapi.yml files when publishing ([049ef7d](https://github.com/mindjolt/actions/commit/049ef7d403af6f8702880520c27bd7f5c9c15b3a))
+
 ## [2.18.0](https://github.com/mindjolt/actions/compare/v2.17.0...v2.18.0) (2025-05-12)
 
 
