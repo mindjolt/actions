@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.0](https://github.com/mindjolt/actions/compare/v2.18.1...v2.19.0) (2025-07-16)
+
+
+### Features
+
+* add slack release message action ([8232fb0](https://github.com/mindjolt/actions/commit/8232fb07d02fa7b57e5657c7026564f70ae1f919))
+
 ## [2.18.1](https://github.com/mindjolt/actions/compare/v2.18.0...v2.18.1) (2025-05-14)
 
 
