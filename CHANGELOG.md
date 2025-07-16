@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.19.1](https://github.com/mindjolt/actions/compare/v2.19.0...v2.19.1) (2025-07-16)
+
+
+### Bug Fixes
+
+* update permission for slack-release-message entrypoint ([0e7fe89](https://github.com/mindjolt/actions/commit/0e7fe89e37f746479a99d64c5cb38ee8a3a89065))
+
 ## [2.19.0](https://github.com/mindjolt/actions/compare/v2.18.1...v2.19.0) (2025-07-16)
 
 
